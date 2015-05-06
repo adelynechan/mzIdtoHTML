@@ -6,16 +6,13 @@
 package javaapplication2;
 
 import java.io.File;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
-
 import org.apache.commons.io.FileUtils;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
 import java.util.List;
-import java.lang.StringBuilder;
+//import java.lang.StringBuilder;
 
 /**
  *
@@ -28,7 +25,7 @@ public class metadata {
         try {
 
             File file = new File("GalaxyExampleProteoGrouper.mzid");
-
+            
             if (file.exists()) {
 
                 boolean aUseSpectrumCache = true;
@@ -37,28 +34,29 @@ public class metadata {
                 SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
                 AnalysisSoftware as = unmarshaller.unmarshal(AnalysisSoftware.class);
 
-                // Extract search type
+                // Extract search type information
                 Param searchType = sip.getSearchType();
                 CvParam searchCv = searchType.getCvParam();
                 String searchString = searchCv.getName();
 
-                // Extract software name 
+                // Extract software name information
                 Param softwareType = as.getSoftwareName();
                 CvParam softwareCv = softwareType.getCvParam();
                 String softwareString = softwareCv.getName();
 
-                // Extract enzyme 
+                // Extract enzymes as a list
                 Enzymes enzymes = sip.getEnzymes();
                 List<Enzyme> enzList = enzymes.getEnzyme();
 
                 // Extract search modifications as a list
                 ModificationParams mp = sip.getModificationParams();
                 List<SearchModification> modList = mp.getSearchModification();
-
+                
                 // Print out extracted metadata to output file
+                // Based on HTML template
                 String printSearchType = "Type of Search: " + searchString;
                 String printSoftwareName = "Analysis Software: " + softwareString;
-
+                
                 StringBuilder enzymeBuilder = new StringBuilder();
 
                 for (Enzyme enzymeList : enzList) {
@@ -72,21 +70,39 @@ public class metadata {
                 }
 
                 String printEnzymes = "Enzymes: " + enzymeBuilder.toString();
+                                
+                StringBuilder modificationsBuilder = new StringBuilder();
                 
+                if (modList.isEmpty()) {
+                    modificationsBuilder.append("No modifications");
+                }
+               
+                else {
+                    for (SearchModification modificationList : modList) {
+                    List<String> modificationName = modificationList.getResidues();
+                    
+                    for (int i = 0; i < modificationName.size(); i++) {
+                            modificationsBuilder.append(modificationName.get(i));
+                            modificationsBuilder.append(modificationName.size());
+                        }                                              
+                    }
+                }
+                String printModifications = "Modifications: " + modificationsBuilder.toString();
+                                               
                 File htmlTemplateFile = new File("template.html");
                 String htmlString = FileUtils.readFileToString(htmlTemplateFile);
-                //String title = "New Page";
-                //htmlString = htmlString.replace("$title", title);
+                
                 htmlString = htmlString.replace("$searchtype", printSearchType);
                 htmlString = htmlString.replace("$softwarename", printSoftwareName);
                 htmlString = htmlString.replace("$enzymes", printEnzymes);
-                File newHtmlFile = new File("new.html");
+                htmlString = htmlString.replace("$modifications", printModifications);
+                File newHtmlFile = new File("template1.html");
                 FileUtils.writeStringToFile(newHtmlFile, htmlString);
-
-            }
-        } catch (Exception e) {
+                }
+        } 
+        catch (Exception e) {
             e.printStackTrace();
-        }
     }
 
+}
 }

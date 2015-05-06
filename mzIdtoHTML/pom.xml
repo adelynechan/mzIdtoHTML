@@ -35,5 +35,5 @@
             <url>http://jmzquantml.googlecode.com/svn/maven/repo</url>
         </repository>
     </repositories>
-    <name>mavenproject1</name>
+    <name>mzIdtoHTML</name>
 </project>

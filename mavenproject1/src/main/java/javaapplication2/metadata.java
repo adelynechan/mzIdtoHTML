@@ -72,15 +72,11 @@ public class metadata {
                 }
 
                 String printEnzymes = "Enzymes: " + enzymeBuilder.toString();
-
-//                out.println("Search Modifications: " + modList);
-//
-//                out.println("Analysis Software Used: " + softwareString);
-//                System.setOut(out);
+                
                 File htmlTemplateFile = new File("template.html");
                 String htmlString = FileUtils.readFileToString(htmlTemplateFile);
-                String title = "New Page";
-                htmlString = htmlString.replace("$title", title);
+                //String title = "New Page";
+                //htmlString = htmlString.replace("$title", title);
                 htmlString = htmlString.replace("$searchtype", printSearchType);
                 htmlString = htmlString.replace("$softwarename", printSoftwareName);
                 htmlString = htmlString.replace("$enzymes", printEnzymes);

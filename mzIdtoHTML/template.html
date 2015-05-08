@@ -7,12 +7,25 @@
 <h1> Results Page </h1>
 </head>
 <h2> Search Metadata </h2>
-<p> $searchtype </p>
-<p> $softwarename </p>
-<p> $enzymes </p>
-<p> $modifications </p>
+<p> Search Modifications: $searchtype </p>
+<p> Analysis Software: $softwarename </p>
+<p> Enzymes Used: $enzymes </p>
+<p> Fixed Modifications: $fixedmodifications </p>
+<p> Variable Modifications: $variablemodifications </p>
 <h2> Global Statistics </h2>
 <p>$statistics </p>
 </html>
 <h2> Peptide View </h2>
+<table style = "width:100%">
+<tr>
+    <th>PSM ID</th>
+    <th>Sequence</th>
+    <th>Calculated m/z Ratio</th>
+    <th>Experimental m/z Ratio</th>
+    <th>Charge</th>
+    <th>Modifications</th>
+    <th>Score</th>
+    <th>Associated Proteins</th>
+</tr>
+$peptideinfo
 <h2> Protein View </h2>

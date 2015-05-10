@@ -79,8 +79,8 @@ public class JavaApplication2 {
                                      String peptideSequence = peptide.getPeptideSequence();
 
                                     System.out.println("Peptide Sequence = " + peptideSequence);
-                                }                                                         
-                             
+                                }  
+                                
                                 }
 
                                 System.out.println("\n");

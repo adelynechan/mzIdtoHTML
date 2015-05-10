@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
  *
  * @author Adelyne
  */
-public class results {
+public class Results {
     
     public static void main(String[] args) {
         
@@ -22,6 +22,7 @@ public class results {
             File htmlTemplateFile = new File("template.html");
             
             Metadata metadata = new Metadata();
+            Peptideinfo peptideinfo = new Peptideinfo();
             
             String searchType = Metadata.getSearchType(file);
             String softwareName = Metadata.getSoftwareName(file);
@@ -29,7 +30,7 @@ public class results {
             String fixedModifications = Metadata.getFixedModifications(file);
             String variableModifications = Metadata.getVariableModifications(file);
             
-            String peptideInfo = peptideview.getPeptideInfo(file);
+            String peptideInfo = Peptideinfo.getPeptideInfo(file);
                                              
             String htmlString = FileUtils.readFileToString(htmlTemplateFile);
                 
@@ -47,7 +48,7 @@ public class results {
         }
         
         catch(Exception e) {
-                    e.printStackTrace(); }
+            e.printStackTrace(); }
     }
     
 }

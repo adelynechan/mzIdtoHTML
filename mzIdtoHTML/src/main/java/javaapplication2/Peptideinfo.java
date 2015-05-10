@@ -20,7 +20,7 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
  *
  * @author Adelyne
  */
-public class peptideview {
+public class Peptideinfo {
     
     public static String getPeptideInfo (File file) {
                
@@ -32,7 +32,7 @@ public class peptideview {
                 
         StringBuilder peptideInfoBuilder = new StringBuilder();
 
-        // Get the list of SpectrumIdentification elements
+        // Get the list of PeptideEvidence elements
         List<SpectrumIdentificationList> sil = ad.getSpectrumIdentificationList();
 
         for (SpectrumIdentificationList sIdentList : sil) {
@@ -43,14 +43,37 @@ public class peptideview {
 
                 for (SpectrumIdentificationItem spectrumIdentItem: spectrumIdentResult.getSpectrumIdentificationItem()) {
 
-                    // Get the following information for SpectrumIdentificationItem element
+                    // Column 1: SII number
                     String spectrumIdItem = spectrumIdentItem.getId();
+                    
+                    // Column 2: Peptide sequence
+                    String peptideRef = spectrumIdentItem.getPeptideRef();
+                    Peptide peptide = spectrumIdentItem.getPeptide();
+                  
+                    // The following block of code throws up a null pointer error
+//                    if (spectrumIdentItem.getPeptideRef() != null) {
+//                        Peptide peptide = spectrumIdentItem.getPeptide();
+//                        peptideSequence = peptide.getPeptideSequence();
+//                    }
+                    
+                    // Column 3: Calculated mass to charge ratio
                     Double calculatedMassToCharge =  spectrumIdentItem.getCalculatedMassToCharge();
+                    
+                    // Column 4: Experimental mass to charge ratio
                     Double experimentalMassToCharge = spectrumIdentItem.getExperimentalMassToCharge();
+                    
+                    // Column 5: Charge
                     int charge = spectrumIdentItem.getChargeState();
                     
+                    // Column 6: Modifications
+                    
+                    
+                    // Column 7: Score
+                    
+                    // Column 8: Associated proteins
+                                                            
                     String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
-                    String printSequence = "<td> " + " " + " </td>";
+                    String printSequence = "<td> " + peptide + " </td>";
                     String printCalculatedMassToCharge = "<td> " + calculatedMassToCharge + " </td>";
                     String printExperimentalMassToCharge = "<td> " + experimentalMassToCharge + " </td>";
                     String printCharge = "<td> " + charge + " </td>";
@@ -60,7 +83,7 @@ public class peptideview {
                     
                     peptideInfoBuilder.append("<tr>");
                     peptideInfoBuilder.append(printSpectrumIdItem);
-                    peptideInfoBuilder.append(printSequence); // for sequence
+                    peptideInfoBuilder.append(printSequence); 
                     peptideInfoBuilder.append(printCalculatedMassToCharge);
                     peptideInfoBuilder.append(printExperimentalMassToCharge);
                     peptideInfoBuilder.append(printCharge);

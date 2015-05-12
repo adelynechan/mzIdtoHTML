@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication2;
+package mzIdtoHTML;
 
 import java.io.File;
 
@@ -15,9 +15,12 @@ import java.util.List;
 /**
  *
  * @author Adelyne
+ * Extracts metadata from the mzIdentML file and returns a string 
+ * This string is accessed by the results file for integration into HTML template
  */
 public class Metadata {
     
+    // Search type
     public static String getSearchType (File file) { 
         MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
         SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
@@ -28,7 +31,8 @@ public class Metadata {
             
         return searchType;
     }
-        
+    
+    // Name of analysis software used
     public static String getSoftwareName (File file) {
         MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
         AnalysisSoftware as = unmarshaller.unmarshal(AnalysisSoftware.class);
@@ -40,6 +44,7 @@ public class Metadata {
         return softwareName;
     }   
     
+    // Enzyme(s) (if empty return "Information not available")
     public static String getEnzymesUsed (File file) {
         MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
         SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
@@ -67,7 +72,8 @@ public class Metadata {
         
         return enzymeBuilder.toString();
     }   
-       
+    
+    // Fixed modifications (if empty return "No modifications")
     public static String getFixedModifications (File file) {
         MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
         SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
@@ -96,6 +102,7 @@ public class Metadata {
         return fixedModificationsBuilder.toString();
     }
     
+    // Variable modifications (if empty return "No modifications")
     public static String getVariableModifications (File file) {
         MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
         SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);

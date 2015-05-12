@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication2;
+package mzIdtoHTML;
 
 import java.io.File;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author Adelyne
  */
-public class JavaApplication2 {
+public class Example1 {
 
     public static void main(String[] args) {
         

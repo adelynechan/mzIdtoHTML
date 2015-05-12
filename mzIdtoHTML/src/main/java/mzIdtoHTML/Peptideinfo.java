@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication2;
+package mzIdtoHTML;
 
 import java.io.File;
 import java.util.List;
@@ -11,6 +11,8 @@ import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.AnalysisData;
 import uk.ac.ebi.jmzidml.model.mzidml.DataCollection;
 import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidenceRef;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
@@ -47,15 +49,17 @@ public class Peptideinfo {
                     String spectrumIdItem = spectrumIdentItem.getId();
                     
                     // Column 2: Peptide sequence
-                    String peptideRef = spectrumIdentItem.getPeptideRef();
-                    Peptide peptide = spectrumIdentItem.getPeptide();
-                  
-                    // The following block of code throws up a null pointer error
-//                    if (spectrumIdentItem.getPeptideRef() != null) {
-//                        Peptide peptide = spectrumIdentItem.getPeptide();
-//                        peptideSequence = peptide.getPeptideSequence();
-//                    }
+                    List<PeptideEvidenceRef> per = spectrumIdentItem.getPeptideEvidenceRef();
+                    StringBuilder peptideSequenceBuilder = new StringBuilder();
                     
+                    for (PeptideEvidenceRef pEvidenceRef : per) {
+                        String peptideEvidenceRef = pEvidenceRef.getPeptideEvidenceRef();
+                        //PeptideEvidence peptideEvidence = pEvidenceRef.getPeptideEvidence();
+                        //Peptide peptide = peptideEvidence.getPeptide();
+                        //String peptideSequence = peptide.getPeptideSequence();
+                        peptideSequenceBuilder.append(peptideEvidenceRef);
+                    }                                      
+                                       
                     // Column 3: Calculated mass to charge ratio
                     Double calculatedMassToCharge =  spectrumIdentItem.getCalculatedMassToCharge();
                     
@@ -73,7 +77,7 @@ public class Peptideinfo {
                     // Column 8: Associated proteins
                                                             
                     String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
-                    String printSequence = "<td> " + peptide + " </td>";
+                    String printSequence = "<td> " + peptideSequenceBuilder + " </td>";
                     String printCalculatedMassToCharge = "<td> " + calculatedMassToCharge + " </td>";
                     String printExperimentalMassToCharge = "<td> " + experimentalMassToCharge + " </td>";
                     String printCharge = "<td> " + charge + " </td>";

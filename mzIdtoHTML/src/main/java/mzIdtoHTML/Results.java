@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication2;
+package mzIdtoHTML;
 
 import java.io.File;
 import org.apache.commons.io.FileUtils;
@@ -22,7 +22,8 @@ public class Results {
             File htmlTemplateFile = new File("template.html");
             
             Metadata metadata = new Metadata();
-            Peptideinfo peptideinfo = new Peptideinfo();
+            //Peptideinfo peptideInfo = new Peptideinfo();
+            PeptideView peptideView = new PeptideView();
             
             String searchType = Metadata.getSearchType(file);
             String softwareName = Metadata.getSoftwareName(file);
@@ -30,7 +31,7 @@ public class Results {
             String fixedModifications = Metadata.getFixedModifications(file);
             String variableModifications = Metadata.getVariableModifications(file);
             
-            String peptideInfo = Peptideinfo.getPeptideInfo(file);
+            String peptideTable = PeptideView.getPeptideInfo(file);           
                                              
             String htmlString = FileUtils.readFileToString(htmlTemplateFile);
                 
@@ -40,7 +41,8 @@ public class Results {
             htmlString = htmlString.replace("$fixedmodifications", fixedModifications);
             htmlString = htmlString.replace("$variablemodifications", variableModifications);
             
-            htmlString = htmlString.replace("$peptideinfo", peptideInfo);
+            //htmlString = htmlString.replace("$peptideinfo", peptideInfo);
+            htmlString = htmlString.replace("$peptideinfo", peptideTable);
             
             File newHtmlFile = new File("template1.html");
             FileUtils.writeStringToFile(newHtmlFile, htmlString);

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication2;
+package mzIdtoHTML;
 
 /**
  * Using the element name and XPath to gather information
@@ -49,6 +49,7 @@ public class Example2 {
                         //System.out.println("PeptideEvidence type" + element.getType());
                         System.out.println("DBSequence ref : " + element.getDBSequenceRef());
                         System.out.println("Start location = " + element.getStart() + ", End location = " + element.getEnd());
+                        System.out.println(element.getDBSequence());
                         System.out.println("\n");
                     }
 

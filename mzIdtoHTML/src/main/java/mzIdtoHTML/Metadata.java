@@ -8,7 +8,6 @@ package mzIdtoHTML;
 import java.io.File;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
-import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
 import java.util.List;
 
@@ -21,9 +20,9 @@ import java.util.List;
 public class Metadata {
     
     // Search type
-    public static String getSearchType (File file) { 
-        MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
-        SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
+    public static String getSearchType () { 
+        
+        SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
             
         Param searchTypeParam = sip.getSearchType();
         CvParam searchCv = searchTypeParam.getCvParam();
@@ -33,9 +32,9 @@ public class Metadata {
     }
     
     // Name of analysis software used
-    public static String getSoftwareName (File file) {
-        MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
-        AnalysisSoftware as = unmarshaller.unmarshal(AnalysisSoftware.class);
+    public static String getSoftwareName () {
+        
+        AnalysisSoftware as = MzidToHTML.unmarshaller.unmarshal(AnalysisSoftware.class);
         
         Param softwareType = as.getSoftwareName();
         CvParam softwareCv = softwareType.getCvParam();
@@ -45,9 +44,9 @@ public class Metadata {
     }   
     
     // Enzyme(s) (if empty return "Information not available")
-    public static String getEnzymesUsed (File file) {
-        MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
-        SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
+    public static String getEnzymesUsed () {
+        
+        SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
         Enzymes enzymes = sip.getEnzymes();
         
         List<Enzyme> enzList = enzymes.getEnzyme();
@@ -74,9 +73,9 @@ public class Metadata {
     }   
     
     // Fixed modifications (if empty return "No modifications")
-    public static String getFixedModifications (File file) {
-        MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
-        SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
+    public static String getFixedModifications () {
+        SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
+
         ModificationParams mp = sip.getModificationParams();
         List<SearchModification> modList = mp.getSearchModification();       
              
@@ -103,9 +102,9 @@ public class Metadata {
     }
     
     // Variable modifications (if empty return "No modifications")
-    public static String getVariableModifications (File file) {
-        MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
-        SpectrumIdentificationProtocol sip = unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
+    public static String getVariableModifications () {
+        SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
+
         ModificationParams mp = sip.getModificationParams();
         List<SearchModification> modList = mp.getSearchModification();       
              

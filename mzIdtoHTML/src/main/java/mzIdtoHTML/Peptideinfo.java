@@ -15,6 +15,7 @@ import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
 import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidenceRef;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationProtocol;
 import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
@@ -24,24 +25,23 @@ import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
  */
 public class Peptideinfo {
     
-    public static String getPeptideInfo (File file) {
-               
-        boolean aUseSpectrumCache = true;
-        MzIdentMLUnmarshaller unmarshaller = new MzIdentMLUnmarshaller(file);
-                                
-        DataCollection dc =  unmarshaller.unmarshal(DataCollection.class);
+    public static String getPeptideInfo () {
+                               
+        DataCollection dc =  MzidToHTML.unmarshaller.unmarshal(DataCollection.class);
         AnalysisData ad = dc.getAnalysisData();
+        Peptide pept = MzidToHTML.unmarshaller.unmarshal(Peptide.class);
+        
                 
         StringBuilder peptideInfoBuilder = new StringBuilder();
 
-        // Get the list of PeptideEvidence elements
+        // Get the list of Spectrum Identification elements
         List<SpectrumIdentificationList> sil = ad.getSpectrumIdentificationList();
 
         for (SpectrumIdentificationList sIdentList : sil) {
             for (SpectrumIdentificationResult spectrumIdentResult: sIdentList.getSpectrumIdentificationResult()) {
 
                 // Get the name of SpectrumIdentificationResult
-                String spectrumID =  spectrumIdentResult.getSpectrumID();
+                //String spectrumID =  spectrumIdentResult.getSpectrumID();
 
                 for (SpectrumIdentificationItem spectrumIdentItem: spectrumIdentResult.getSpectrumIdentificationItem()) {
 
@@ -49,16 +49,9 @@ public class Peptideinfo {
                     String spectrumIdItem = spectrumIdentItem.getId();
                     
                     // Column 2: Peptide sequence
-                    List<PeptideEvidenceRef> per = spectrumIdentItem.getPeptideEvidenceRef();
-                    StringBuilder peptideSequenceBuilder = new StringBuilder();
-                    
-                    for (PeptideEvidenceRef pEvidenceRef : per) {
-                        String peptideEvidenceRef = pEvidenceRef.getPeptideEvidenceRef();
-                        //PeptideEvidence peptideEvidence = pEvidenceRef.getPeptideEvidence();
-                        //Peptide peptide = peptideEvidence.getPeptide();
-                        //String peptideSequence = peptide.getPeptideSequence();
-                        peptideSequenceBuilder.append(peptideEvidenceRef);
-                    }                                      
+                    //Peptide peptide = new Peptide();
+                    //peptide = spectrumIdentItem.getPeptide();
+                    //String sequence = peptide.getPeptideSequence();                                   
                                        
                     // Column 3: Calculated mass to charge ratio
                     Double calculatedMassToCharge =  spectrumIdentItem.getCalculatedMassToCharge();
@@ -74,10 +67,11 @@ public class Peptideinfo {
                     
                     // Column 7: Score
                     
+                    
                     // Column 8: Associated proteins
                                                             
                     String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
-                    String printSequence = "<td> " + peptideSequenceBuilder + " </td>";
+                    String printSequence = "<td> " + " " + " </td>";
                     String printCalculatedMassToCharge = "<td> " + calculatedMassToCharge + " </td>";
                     String printExperimentalMassToCharge = "<td> " + experimentalMassToCharge + " </td>";
                     String printCharge = "<td> " + charge + " </td>";

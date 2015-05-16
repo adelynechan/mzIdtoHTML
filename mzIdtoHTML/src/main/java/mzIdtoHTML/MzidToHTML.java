@@ -6,6 +6,7 @@
 package mzIdtoHTML;
 
 import java.io.File;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
@@ -40,7 +41,9 @@ public class MzidToHTML {
         String variableModifications = Metadata.getVariableModifications();
         
         Peptideinfo peptideinfo = new Peptideinfo();
-        String peptideTable = Peptideinfo.getPeptideInfo();
+        List<String> peptideView = Peptideinfo.getPeptideInfo();
+        String peptideTable = peptideView.get(0);
+        String scoreName = peptideView.get(1);
         
         try {
             String htmlString = FileUtils.readFileToString(htmlTemplateFile);                
@@ -52,6 +55,7 @@ public class MzidToHTML {
             htmlString = htmlString.replace("$variablemodifications", variableModifications);
             
             htmlString = htmlString.replace("$peptideinfo", peptideTable);
+            htmlString = htmlString.replace("$scorename", scoreName);
             
             File newHtmlFile = new File(output);
             FileUtils.writeStringToFile(newHtmlFile, htmlString);

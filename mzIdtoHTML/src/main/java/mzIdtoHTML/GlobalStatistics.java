@@ -14,12 +14,15 @@ import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
  */
 public class GlobalStatistics {
     PeptideInfo peptideInfo = new PeptideInfo();
+    private static HashMap<String, Peptide> peptideIdHashMap = PeptideInfo.getPeptideIdHashmap();
     
-    public static int getPeptideNumber() {
-        HashMap<String, Peptide> peptideIdHashMap = PeptideInfo.getPeptideIdHashmap();
-        int peptideNumber = peptideIdHashMap.size();
-        
+    public static int getPeptideNumber() {    
+        int peptideNumber = peptideIdHashMap.size();   
         return peptideNumber;
+    }
+    
+    public static int getDecoyNumber() {
+        
     }
     
 }

@@ -40,10 +40,14 @@ public class MzidToHTML {
         String fixedModifications = Metadata.getFixedModifications();
         String variableModifications = Metadata.getVariableModifications();
         
-        Peptideinfo peptideinfo = new Peptideinfo();
-        List<String> peptideView = Peptideinfo.getPeptideInfo();
+        PeptideInfo peptideinfo = new PeptideInfo();
+        List<String> peptideView = PeptideInfo.getPeptideInfo();
         String peptideTable = peptideView.get(0);
         String scoreName = peptideView.get(1);
+        
+        GlobalStatistics globalStatistics = new GlobalStatistics();
+        int peptideNumber = GlobalStatistics.getPeptideNumber();
+        String peptideNumberString = Integer.toString(peptideNumber);
         
         try {
             String htmlString = FileUtils.readFileToString(htmlTemplateFile);                
@@ -56,6 +60,8 @@ public class MzidToHTML {
             
             htmlString = htmlString.replace("$peptideinfo", peptideTable);
             htmlString = htmlString.replace("$scorename", scoreName);
+            
+            htmlString = htmlString.replace("$peptidenumber", peptideNumberString);
             
             File newHtmlFile = new File(output);
             FileUtils.writeStringToFile(newHtmlFile, htmlString);

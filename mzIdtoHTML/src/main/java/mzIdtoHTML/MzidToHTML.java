@@ -34,15 +34,21 @@ public class MzidToHTML {
         File htmlTemplateFile = new File("template.html");
                 
         Metadata metadata = new Metadata();
-        String searchType = Metadata.getSearchType();
-        String softwareName = Metadata.getSoftwareName();
-        String enzymesUsed = Metadata.getEnzymesUsed();
-        String fixedModifications = Metadata.getFixedModifications();
-        String variableModifications = Metadata.getVariableModifications();
+        String searchType = metadata.getSearchType();
+        String softwareName = metadata.getSoftwareName();
+        String enzymesUsed = metadata.getEnzymesUsed();
+        String fixedModifications = metadata.getFixedModifications();
+        String variableModifications = metadata.getVariableModifications();
         
+        // Extract information required for peptide view table
+        // Create a new instance of PeptideInfo object
         PeptideInfo peptideinfo = new PeptideInfo();
-        List<String> peptideView = PeptideInfo.getPeptideInfo();
+        // getPeptideInfo method returns a list with 2 elements
+        List<String> peptideView = peptideinfo.getPeptideInfo();
+        // A string containing the contents of the HTML table
         String peptideTable = peptideView.get(0);
+        // A string containing the type of score used for column 7
+        // This is to be included into the table header
         String scoreName = peptideView.get(1);
         
         GlobalStatistics globalStatistics = new GlobalStatistics();

@@ -21,8 +21,6 @@ public class GlobalStatistics {
         return peptideNumber;
     }
     
-    public static int getDecoyNumber() {
-        
-    }
+    
     
 }

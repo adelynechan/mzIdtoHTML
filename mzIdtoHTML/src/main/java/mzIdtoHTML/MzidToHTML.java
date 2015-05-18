@@ -34,7 +34,8 @@ public class MzidToHTML {
         File htmlTemplateFile = new File("template.html");
                 
         Metadata metadata = new Metadata();
-        String searchType = Metadata.getSearchType();
+//        String searchType = Metadata.getSearchType();
+        String searchType = metadata.getSearchType();
         String softwareName = Metadata.getSoftwareName();
         String enzymesUsed = Metadata.getEnzymesUsed();
         String fixedModifications = Metadata.getFixedModifications();

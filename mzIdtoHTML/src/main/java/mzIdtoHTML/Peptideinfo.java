@@ -48,7 +48,7 @@ public class PeptideInfo {
         return peptideEvidenceIdHashMap;
     }
     
-    private static List getSpectrumIdentificationList() {  // Why must this be static in order for Line 80 below to work?
+    private static List getSpectrumIdentificationList() {  // Has to be static for Line 80 below to work
         DataCollection dc =  MzidToHTML.unmarshaller.unmarshal(DataCollection.class);
         AnalysisData ad = dc.getAnalysisData();  
         List<SpectrumIdentificationList> sil = ad.getSpectrumIdentificationList();

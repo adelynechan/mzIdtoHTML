@@ -34,30 +34,36 @@ public class Metadata {
     }
 
     // Name of analysis software used
+    // <xsd:element name="AnalysisSoftware" type="AnalysisSoftwareType" maxOccurs="unbounded"/>
+    // <xsd:documentation> The software packages used to perform the analyses.
+    
     String getSoftwareName() {
 
         AnalysisSoftware as = MzidToHTML.unmarshaller.unmarshal(AnalysisSoftware.class);
-
         Param softwareType = as.getSoftwareName();
-        CvParam softwareCv = softwareType.getCvParam();
-        String softwareName = softwareCv.getName();
-
-        return softwareName;
+        
+        if(softwareType == null) {
+            return "Information not available";
+        }   
+        
+        else {
+            return as.getSoftwareName().getCvParam().getName();
+        }
     }
 
     // Enzyme(s) (if empty return "Information not available")
+    // <xsd:element name="Enzymes" type="EnzymesType" minOccurs="0"/>
     String getEnzymesUsed() {
 
         SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
-        Enzymes enzymes = sip.getEnzymes();
-
-        List<Enzyme> enzList = enzymes.getEnzyme();
-
+        List<Enzyme> enzList = sip.getEnzymes().getEnzyme();
         StringBuilder enzymeBuilder = new StringBuilder();
 
-        if (enzList.isEmpty()) {
+        if (enzList.isEmpty()) { 
             enzymeBuilder.append("Information not available");
-        } else {
+        } 
+        
+        else {
             for (Enzyme enzymeList : enzList) {
                 ParamList enzymeName = enzymeList.getEnzymeName();
                 List<CvParam> enzymeParam;
@@ -72,7 +78,7 @@ public class Metadata {
         return enzymeBuilder.toString();
     }
 
-    // Fixed modifications (if empty return "No modifications")
+    // Fixed modifications searched (if empty return "No modifications")
     String getFixedModifications() {
         SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
 
@@ -99,7 +105,7 @@ public class Metadata {
         return fixedModificationsBuilder.toString();
     }
 
-    // Variable modifications (if empty return "No modifications")
+    // Variable modifications searched (if empty return "No modifications")
     String getVariableModifications() {
         SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
 

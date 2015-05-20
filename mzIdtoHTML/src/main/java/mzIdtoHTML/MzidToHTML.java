@@ -32,7 +32,8 @@ public class MzidToHTML {
 
     public void convert(String output) {
         File htmlTemplateFile = new File("template.html");
-                
+        
+        // Extract information required for metadata menu section
         Metadata metadata = new Metadata();
         String searchType = metadata.getSearchType();
         String softwareName = metadata.getSoftwareName();
@@ -41,19 +42,14 @@ public class MzidToHTML {
         String variableModifications = metadata.getVariableModifications();
         
         // Extract information required for peptide view table
-        // Create a new instance of PeptideInfo object
         PeptideInfo peptideinfo = new PeptideInfo();
-        // getPeptideInfo method returns a list with 2 elements
-        List<String> peptideView = peptideinfo.getPeptideInfo();
-        // A string containing the contents of the HTML table
-        String peptideTable = peptideView.get(0);
-        // A string containing the type of score used for column 7
-        // This is to be included into the table header
-        String scoreName = peptideView.get(1);
+        List<String> peptideView = peptideinfo.getPeptideInfo(); // Method returns a list with 2 elements
+        String peptideTable = peptideView.get(0); // String containing contents of HTML table
+        String scoreName = peptideView.get(1); // String containing type of score (for table header)
         
-        GlobalStatistics globalStatistics = new GlobalStatistics();
-        int peptideNumber = GlobalStatistics.getPeptideNumber();
-        String peptideNumberString = Integer.toString(peptideNumber);
+        //GlobalStatistics globalStatistics = new GlobalStatistics();
+        //int peptideNumber = GlobalStatistics.getPeptideNumber();
+        //String peptideNumberString = Integer.toString(peptideNumber);
         
         try {
             String htmlString = FileUtils.readFileToString(htmlTemplateFile);                

@@ -16,11 +16,13 @@ public class GlobalStatistics {
     PeptideInfo peptideInfo = new PeptideInfo();
     private static HashMap<String, Peptide> peptideIdHashMap = PeptideInfo.getPeptideIdHashmap();
     
-    public static int getPeptideNumber() {    
+    int getPeptideNumber() {    
         int peptideNumber = peptideIdHashMap.size();   
         return peptideNumber;
     }
     
-    
+    int getCutOff() {
+        
+    }
     
 }

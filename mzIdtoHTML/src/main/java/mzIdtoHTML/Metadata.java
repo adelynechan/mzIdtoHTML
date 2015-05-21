@@ -5,7 +5,6 @@
  */
 package mzIdtoHTML;
 
-import java.io.File;
 
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 
@@ -35,8 +34,7 @@ public class Metadata {
 
     // Name of analysis software used
     // <xsd:element name="AnalysisSoftware" type="AnalysisSoftwareType" maxOccurs="unbounded"/>
-    // <xsd:documentation> The software packages used to perform the analyses.
-    
+    // <xsd:documentation> The software packages used to perform the analyses  
     String getSoftwareName() {
 
         AnalysisSoftware as = MzidToHTML.unmarshaller.unmarshal(AnalysisSoftware.class);

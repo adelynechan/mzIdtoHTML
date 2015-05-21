@@ -18,7 +18,7 @@ import uk.ac.ebi.jmzidml.MzIdentMLElement;
  */
 public class PeptideInfo {
     
-    public static HashMap <String, Peptide> getPeptideIdHashmap () {
+    public HashMap <String, Peptide> getPeptideIdHashmap () {
         HashMap<String, Peptide> peptideIdHashMap = new HashMap();
         Iterator<Peptide> iterPeptide = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
             while (iterPeptide.hasNext()) {
@@ -28,7 +28,7 @@ public class PeptideInfo {
         return peptideIdHashMap;
     }
     
-    public static HashMap <String, DBSequence> getDbSequenceIdHashMap() {
+    public HashMap <String, DBSequence> getDbSequenceIdHashMap() {
         HashMap<String, DBSequence> dbSequenceIdHashMap = new HashMap();
         Iterator<DBSequence> iterDBSequence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
             while (iterDBSequence.hasNext()) {
@@ -38,7 +38,7 @@ public class PeptideInfo {
         return dbSequenceIdHashMap;
     }
     
-    public static HashMap <String, PeptideEvidence> getPeptideEvidenceIdHashMap() {
+    public HashMap <String, PeptideEvidence> getPeptideEvidenceIdHashMap() {
         HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = new HashMap();
         Iterator<PeptideEvidence> iterPeptideEvidence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
             while (iterPeptideEvidence.hasNext()) {
@@ -47,8 +47,8 @@ public class PeptideInfo {
             }
         return peptideEvidenceIdHashMap;
     }
-    
-    private static List getSpectrumIdentificationList() {  // Has to be static for Line 80 below to work
+       
+    public List getSpectrumIdentificationList() {  
         DataCollection dc =  MzidToHTML.unmarshaller.unmarshal(DataCollection.class);
         AnalysisData ad = dc.getAnalysisData();  
         List<SpectrumIdentificationList> sil = ad.getSpectrumIdentificationList();
@@ -59,12 +59,13 @@ public class PeptideInfo {
     List<String> getPeptideInfo() {
         
         // Get the hashmaps required for accessing information for each SpectrumIdentificationItem
-        HashMap<String, Peptide> peptideIdHashMap = PeptideInfo.getPeptideIdHashmap();
-        HashMap<String, DBSequence> dbSequenceIdHashMap = PeptideInfo.getDbSequenceIdHashMap();
-        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = PeptideInfo.getPeptideEvidenceIdHashMap();
+        PeptideInfo peptideInfo = new PeptideInfo();
+        HashMap<String, Peptide> peptideIdHashMap = peptideInfo.getPeptideIdHashmap();
+        HashMap<String, DBSequence> dbSequenceIdHashMap = peptideInfo.getDbSequenceIdHashMap();
+        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideInfo.getPeptideEvidenceIdHashMap();
         
         // Get the list of Spectrum Identification elements
-        List<SpectrumIdentificationList> sil = PeptideInfo.getSpectrumIdentificationList();
+        List<SpectrumIdentificationList> sil = peptideInfo.getSpectrumIdentificationList();
         
         // Initialise variables for the items that are to be returned
             // StringBuilder to be returned as a string containing all the peptide information
@@ -149,10 +150,10 @@ public class PeptideInfo {
             }                         
         }  
         
-        List<String> peptideInfo = new ArrayList<String>();
-        peptideInfo.add(peptideInfoBuilder.toString());
-        peptideInfo.add(scoreName);
+        List<String> peptideInfoReturn = new ArrayList<String>();
+        peptideInfoReturn.add(peptideInfoBuilder.toString());
+        peptideInfoReturn.add(scoreName);
         
-        return peptideInfo;
+        return peptideInfoReturn;
     }
 }

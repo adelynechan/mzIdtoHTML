@@ -94,7 +94,7 @@ public class PeptideInfo {
                     Double calculatedMassToCharge =  spectrumIdentItem.getCalculatedMassToCharge();
                     
                     // Column 4: Experimental mass to charge ratio
-                    Double experimentalMassToCharge = spectrumIdentItem.getExperimentalMassToCharge();
+                    Double experimentalMassToCharge = spectrumIdentItem.getExperimentalMassToCharge();                           
                     
                     // Column 5: Charge
                     int charge = spectrumIdentItem.getChargeState();
@@ -129,8 +129,8 @@ public class PeptideInfo {
                                                                                
                     String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
                     String printSequence = "<td> " + sequence + " </td>";
-                    String printCalculatedMassToCharge = "<td> " + calculatedMassToCharge + " </td>";
-                    String printExperimentalMassToCharge = "<td> " + experimentalMassToCharge + " </td>";
+                    String printCalculatedMassToCharge = "<td> " + String.format("%.2f", calculatedMassToCharge) + " </td>";
+                    String printExperimentalMassToCharge = "<td> " + String.format("%.2f", experimentalMassToCharge) + " </td>";
                     String printCharge = "<td> " + charge + " </td>";
                     String printModifications = "<td> " + " " + " </td>";
                     String printScore = "<td> " + scoreValue + " </td>";

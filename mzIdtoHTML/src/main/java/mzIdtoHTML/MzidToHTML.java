@@ -33,12 +33,16 @@ public class MzidToHTML {
         
         headerBuilder.append("<html>");
         headerBuilder.append("<head>");
-        headerBuilder.append("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
+        //headerBuilder.append("<link rel='stylesheet' type='text/css' href='stylesheet.css'>");
+        headerBuilder.append("<link rel=\"stylesheet\" "
+            + "href=\"stylesheet.css\">"
+            + "<script src=\"http://code.jquery.com/jquery-latest.min.js\" type=\"text/javascript\"></script>");
+        
         headerBuilder.append("<title>mzIdtoHTML</title>");
         headerBuilder.append("<h1> mzIdentML to HTML for ");
         headerBuilder.append(input);
         headerBuilder.append("</h1>");
-        headerBuilder.append("</head>");
+        headerBuilder.append("</head>");  
         
         return headerBuilder.toString();
     }
@@ -47,27 +51,35 @@ public class MzidToHTML {
         Metadata metadata = new Metadata();
         StringBuilder metadataBuilder = new StringBuilder();
         
+        //metadataBuilder.append("<div data-role=\"collapsible\" data-collapsed = \"true\">");
         metadataBuilder.append("<h2> Metadata </h2>");
         
-        metadataBuilder.append("<p> Search Type: ");
+        metadataBuilder.append("<p>");
+        metadataBuilder.append("Search Type: ");
         metadataBuilder.append(metadata.getSearchType());
         metadataBuilder.append("</p>");
         
-        metadataBuilder.append("<p> Software Name: ");
+        metadataBuilder.append("<p>");
+        metadataBuilder.append("Software Name: ");
         metadataBuilder.append(metadata.getSoftwareName());
         metadataBuilder.append("</p>");
         
-        metadataBuilder.append("<p> Enzymes Used: ");
+        metadataBuilder.append("<p>");
+        metadataBuilder.append("Enzymes Used: ");
         metadataBuilder.append(metadata.getEnzymesUsed());
         metadataBuilder.append("</p>");
         
-        metadataBuilder.append("<p> Fixed Modifications: ");
+        metadataBuilder.append("<p>");
+        metadataBuilder.append("Fixed Modifications: ");
         metadataBuilder.append(metadata.getFixedModifications());
         metadataBuilder.append("</p>");
         
-        metadataBuilder.append("<p> Variable Modifications: ");
+        metadataBuilder.append("<p>");
+        metadataBuilder.append("Variable Modifications: ");
         metadataBuilder.append(metadata.getVariableModifications());
         metadataBuilder.append("</p>");
+        
+        //metadataBuilder.append("</div>");
         
         return metadataBuilder.toString();
     }
@@ -97,7 +109,7 @@ public class MzidToHTML {
         
         peptideInfoMainBuilder.append("<h2> Peptide View </h2>");
         peptideInfoMainBuilder.append("<table> <table style = 'width:100%'> <tr>");
-        peptideInfoMainBuilder.append("<th>PSM ID</th> <th>Sequence</th> <th>Calc m/z</th> <th>Exp m/z</th> <th>Charge</th> <th>Modifications</th> <th>Score");
+        peptideInfoMainBuilder.append("<th>PSM ID</th> <th>Sequence</th> <th>Calc m/z</th> <th>Exp m/z</th> <th>Charge</th> <th>Modifications</th> <th>Score: ");
         peptideInfoMainBuilder.append(peptideView.get(1));
         peptideInfoMainBuilder.append("</th> <th>Associated Proteins</th> </tr>");
         peptideInfoMainBuilder.append(peptideView.get(0));

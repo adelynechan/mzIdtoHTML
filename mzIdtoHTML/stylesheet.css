@@ -1,0 +1,42 @@
+<head>
+<style>
+body {
+    background-color: linen;
+}
+
+h1 {
+    color: CornflowerBlue;
+    text-align: center;
+    font-family: "Verdana", Geneva, sans-serif;
+    font-size: 30px;
+} 
+
+h2 {
+    color: MidnightBlue;    
+    font-family: "Arial", Helvetica, sans-serif;
+    font-size: 30px;
+}
+
+table, th, td {
+    border: 1px solid blue;
+}
+
+table {
+    width: 100%;
+}
+
+th {
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: DarkBlue;
+    color: White;
+}
+
+td {
+    height: 50px;
+}
+
+</style>
+</head>
+

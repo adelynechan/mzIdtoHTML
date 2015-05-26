@@ -20,14 +20,18 @@ import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
  * @author Adelyne
  */
 public class GlobalStatistics {
-    PeptideInfo peptideInfo = new PeptideInfo();
-    private HashMap<String, Peptide> peptideIdHashMap = peptideInfo.getPeptideIdHashmap();
-    private HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideInfo.getPeptideEvidenceIdHashMap();
-    private HashMap<String, DBSequence> dbSequenceIdHashMap = peptideInfo.getDbSequenceIdHashMap();
+    PeptideInfo peptideInfo;
+    
+    public GlobalStatistics(){
+        peptideInfo = new PeptideInfo();
+    }
+     
+//    private HashMap<String, Peptide> peptideIdHashMap = ;
+//    private HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideInfo.getPeptideEvidenceIdHashMap();
+//    private HashMap<String, DBSequence> dbSequenceIdHashMap = peptideInfo.getDbSequenceIdHashMap();
     
     int getPeptideNumber() {    
-        int peptideNumber = peptideIdHashMap.size();   
-        return peptideNumber;
+        return peptideInfo.getPeptideIdHashmap().size();   
     }
     
     int getDecoyPercentage() {     
@@ -41,7 +45,7 @@ public class GlobalStatistics {
                     
                     for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
                         PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(i);
-                        PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideEvidenceRef.getPeptideEvidenceRef());
+                        PeptideEvidence peptideEvidence = peptideInfo.getPeptideEvidenceIdHashMap().get(peptideEvidenceRef.getPeptideEvidenceRef());
                         
                         if (peptideEvidence.isIsDecoy()) {
                             decoyNumber += 1;  

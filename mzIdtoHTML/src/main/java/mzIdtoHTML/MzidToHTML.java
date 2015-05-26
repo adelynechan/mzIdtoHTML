@@ -108,8 +108,8 @@ public class MzidToHTML {
         String scoreName = peptideView.get(1); // String containing type of score (for table header)
         
         peptideInfoMainBuilder.append("<h2> Peptide View </h2>");
-        peptideInfoMainBuilder.append("<table> <table style = 'width:100%'> <tr>");
-        peptideInfoMainBuilder.append("<th>PSM ID</th> <th>Sequence</th> <th>Calc m/z</th> <th>Exp m/z</th> <th>Charge</th> <th>Modifications</th> <th>Score: ");
+        peptideInfoMainBuilder.append("<table> two tables? <table style = 'width:100%'>\n\t<tr>");
+        peptideInfoMainBuilder.append("<th>PSM ID</th>\n<th>Sequence</th> <th>Calc m/z</th> <th>Exp m/z</th> <th>Charge</th> <th>Modifications</th> <th>Score: ");
         peptideInfoMainBuilder.append(peptideView.get(1));
         peptideInfoMainBuilder.append("</th> <th>Associated Proteins</th> </tr>");
         peptideInfoMainBuilder.append(peptideView.get(0));

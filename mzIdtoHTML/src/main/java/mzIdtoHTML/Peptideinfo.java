@@ -100,7 +100,18 @@ public class PeptideInfo {
                     int charge = spectrumIdentItem.getChargeState();
                     
                     // Column 6: Modifications
+                    List <Modification> modifications = peptide.getModification();
+                    StringBuilder modificationsBuilder = new StringBuilder();
                     
+                    if (peptide.getModification().isEmpty()) {
+                        modificationsBuilder.append("None");
+                    }
+                    
+                    else {
+                        for (Modification modification: peptide.getModification()) {
+                            modificationsBuilder.append(modification);
+                        }
+                    }
                     
                     // Column 7: Score
                     // The first element of score is used 
@@ -132,7 +143,7 @@ public class PeptideInfo {
                     String printCalculatedMassToCharge = "<td> " + String.format("%.2f", calculatedMassToCharge) + " </td>";
                     String printExperimentalMassToCharge = "<td> " + String.format("%.2f", experimentalMassToCharge) + " </td>";
                     String printCharge = "<td> " + charge + " </td>";
-                    String printModifications = "<td> " + " " + " </td>";
+                    String printModifications = "<td> " + modificationsBuilder.toString() + " </td>";
                     String printScore = "<td> " + scoreValue + " </td>";
                     String printAssociatedProteins = "<td> " + proteinName + " </td>";
                     
@@ -153,7 +164,7 @@ public class PeptideInfo {
         List<String> peptideInfoReturn = new ArrayList<String>();
         peptideInfoReturn.add(peptideInfoBuilder.toString());
         peptideInfoReturn.add(scoreName);
-        
+
         return peptideInfoReturn;
     }
 }

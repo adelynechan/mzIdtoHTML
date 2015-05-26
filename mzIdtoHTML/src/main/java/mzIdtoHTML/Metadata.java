@@ -40,6 +40,9 @@ public class Metadata {
         AnalysisSoftware as = MzidToHTML.unmarshaller.unmarshal(AnalysisSoftware.class);
         Param softwareType = as.getSoftwareName();
         
+        // For the software name, the maxOccurs is unbounded which suggests that there may be more than one
+        // However I cannot extract as a list...
+        
         if(softwareType == null) {
             return "Information not available";
         }   

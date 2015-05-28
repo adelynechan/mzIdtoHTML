@@ -25,35 +25,34 @@ public class GlobalStatistics {
     public GlobalStatistics(){
         peptideInfo = new PeptideInfo();
     }
-     
-//    private HashMap<String, Peptide> peptideIdHashMap = ;
-//    private HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideInfo.getPeptideEvidenceIdHashMap();
-//    private HashMap<String, DBSequence> dbSequenceIdHashMap = peptideInfo.getDbSequenceIdHashMap();
     
     int getPeptideNumber() {    
         return peptideInfo.getPeptideIdHashmap().size();   
     }
     
     int getDecoyPercentage() {     
-        List<SpectrumIdentificationList> sil = peptideInfo.getSpectrumIdentificationList();
-        int decoyNumber = 0;
+        GlobalStatistics globalStatistics = new GlobalStatistics();
+        int peptideNumber = globalStatistics.getPeptideNumber();
         
-        for (SpectrumIdentificationList sIdentList : sil) {
-            for (SpectrumIdentificationResult spectrumIdentResult: sIdentList.getSpectrumIdentificationResult()) {
-                for (SpectrumIdentificationItem spectrumIdentItem: spectrumIdentResult.getSpectrumIdentificationItem()) {
-                    List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
-                    
-                    for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
-                        PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(i);
-                        PeptideEvidence peptideEvidence = peptideInfo.getPeptideEvidenceIdHashMap().get(peptideEvidenceRef.getPeptideEvidenceRef());
-                        
-                        if (peptideEvidence.isIsDecoy()) {
-                            decoyNumber += 1;  
-                        }      
-                    }
-                }
-            }
-        }
+//        List<SpectrumIdentificationList> sil = peptideInfo.getSpectrumIdentificationList();
+//        int decoyNumber = 0;
+//        
+//        for (SpectrumIdentificationList sIdentList : sil) {
+//            for (SpectrumIdentificationResult spectrumIdentResult: sIdentList.getSpectrumIdentificationResult()) {
+//                for (SpectrumIdentificationItem spectrumIdentItem: spectrumIdentResult.getSpectrumIdentificationItem()) {
+//                    List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
+//                    
+//                    for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
+//                        PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(i);
+//                        PeptideEvidence peptideEvidence = peptideInfo.getPeptideEvidenceIdHashMap().get(peptideEvidenceRef.getPeptideEvidenceRef());
+//                        
+//                        if (peptideEvidence.isIsDecoy()) {
+//                            decoyNumber += 1;  
+//                        }      
+//                    }
+//                }
+//            }
+//        }
         return decoyNumber;
     }
 }

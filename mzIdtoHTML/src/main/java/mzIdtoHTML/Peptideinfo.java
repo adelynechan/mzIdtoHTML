@@ -140,11 +140,11 @@ public class PeptideInfo {
                                                                                
                     String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
                     String printSequence = "<td> " + sequence + " </td>";
-                    String printCalculatedMassToCharge = "<td> " + String.format("%.2f", calculatedMassToCharge) + " </td>";
-                    String printExperimentalMassToCharge = "<td> " + String.format("%.2f", experimentalMassToCharge) + " </td>";
-                    String printCharge = "<td> " + charge + " </td>";
+                    String printCalculatedMassToCharge = "<td> <div style = \"text-align:right\">" + String.format("%.2f", calculatedMassToCharge) + " </td>";
+                    String printExperimentalMassToCharge = "<td> <div style = \"text-align:right\">" + String.format("%.2f", experimentalMassToCharge) + " </td>";
+                    String printCharge = "<td> <div style = \"text-align:center\">" + charge + " </td>";
                     String printModifications = "<td> " + modificationsBuilder.toString() + " </td>";
-                    String printScore = "<td> " + scoreValue + " </td>";
+                    String printScore = "<td> <div style = \"text-align:center\">" + scoreValue + " </td>";
                     String printAssociatedProteins = "<td> " + proteinName + " </td>";
                     
                     peptideInfoBuilder.append("<tr>");

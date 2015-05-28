@@ -114,11 +114,14 @@ public class MzidToHTML {
         // Creates the header for this item
         statisticsBuilder.append("<h2> Global Statistics </h2>");
         
-
-//        int peptideNumber = globalStatistics.getPeptideNumber();
-//        //String peptideNumberString = Integer.toString(peptideNumber);
-//        int peptideEvidenceNumber = globalStatistics.getDecoyPercentage();
-//        System.out.println(peptideEvidenceNumber);
+        int peptideNumber = globalStatistics.getPeptideNumber();
+        //int peptideDecoyPercentage = globalStatistics.getDecoyPercentage();
+        //think about how to get the decoy percentage? current method takes too long 
+        
+        statisticsBuilder.append("Peptide Number: ");
+        statisticsBuilder.append(Integer.toString(peptideNumber));
+        //statisticsBuilder.append("Decoy Percentage: " );
+        //statisticsBuilder.append(peptideDecoyString);
         
         // Convert stringbuilder to a string and return
         return statisticsBuilder.toString();

@@ -8,6 +8,7 @@ package mzIdtoHTML;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
@@ -159,10 +160,17 @@ public class MzidToHTML {
     }
     
     private String getProteinInfoMain() {
-        //ProteinInfo proteinInfoMain = new ProteinInfo();
+        ProteinInfo proteinInfoMain = new ProteinInfo();
         StringBuilder proteinInfoMainBuilder = new StringBuilder();
-        
-        proteinInfoMainBuilder.append("<h2> Protein View </h2>");
+        ProteinDetectionList pdl = proteinInfoMain.getProteinDetectionList();
+           
+        if (pdl != null) {
+            
+            proteinInfoMainBuilder.append("<h2> Protein View </h2>");
+            proteinInfoMainBuilder.append("<table> <table style = 'width:100%'>\n\t<tr>");
+            proteinInfoMainBuilder.append("<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> "
+                + "\n<th>FDR Score</th> \n<th>Observed/Observable</th></tr>");
+        }
         
         return proteinInfoMainBuilder.toString();
     }
@@ -190,7 +198,9 @@ public class MzidToHTML {
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
             fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3
-            // Need an if statement here to ignore proteininfo part if no protein inference
+            
+            
+            
             fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             fileWriter.close();
         }
@@ -201,11 +211,12 @@ public class MzidToHTML {
     }
 
     public static void main(String[] args) {
-        String input = "GalaxyExampleProteoGrouper.mzid";
+        String input = "GalaxyExamplePeptide.mzid";
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);              
+        converter.convert(input, output);   
+
     }
 }
         

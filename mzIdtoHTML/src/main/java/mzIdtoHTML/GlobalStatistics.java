@@ -5,16 +5,6 @@
  */
 package mzIdtoHTML;
 
-import java.util.HashMap;
-import java.util.List;
-import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
-import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidenceRef;
-import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
-import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
-import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
-import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationList;
-import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationResult;
-
 /**
  *
  * @author Adelyne

@@ -41,8 +41,9 @@ public class MzidToHTML {
         headerBuilder.append("<head>");
         //headerBuilder.append("<link rel='stylesheet' type='text/css' href='stylesheet.css'>");
         headerBuilder.append("<link rel=\"stylesheet\" "
-            + "href=\"stylesheet.css\">"
-            + "<script src=\"http://code.jquery.com/jquery-latest.min.js\" type=\"text/javascript\"></script>");
+            + "href=\"stylesheet.css\">");
+            //+ "<script src=\"http://code.jquery.com/jquery-latest.min.js\" type=\"text/javascript\"></script>"
+        headerBuilder.append("<script src=\"sorttable.js\" type=\"text/javascript\"></script>");
         
         headerBuilder.append("<title>mzIdtoHTML</title>");
         headerBuilder.append("<h1> mzIdentML to HTML for ");
@@ -145,9 +146,12 @@ public class MzidToHTML {
         // Create the main header "Peptide View"
         peptideInfoMainBuilder.append("<h2> Peptide View </h2>");
         
+        // Specify features of table - sortable (takes time!), table width
+        //peptideInfoMainBuilder.append("<html><head><script src=\"sorttable.js\" type=\"text/javascript\"></script></head>");
+        peptideInfoMainBuilder.append("<table><table class = \"sortable\" table style = \"width = 100%\"");
+        
         // Create the header row of the table
-        peptideInfoMainBuilder.append("<table> two tables? <table style = 'width:100%'>\n\t<tr>");
-        peptideInfoMainBuilder.append("<th>PSM ID</th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
+        peptideInfoMainBuilder.append("<tr><th>PSM ID</th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
                 + "\n<th>Exp m/z</th> \n<th>Charge</th> \n<th>Modifications</th> \n<th>Score: ");
         peptideInfoMainBuilder.append(peptideView.get(1)); // Get type of score and include in header
         peptideInfoMainBuilder.append("</th> <th>Associated Proteins</th> </tr>");
@@ -163,6 +167,7 @@ public class MzidToHTML {
         ProteinInfo proteinInfoMain = new ProteinInfo();
         StringBuilder proteinInfoMainBuilder = new StringBuilder();
         ProteinDetectionList pdl = proteinInfoMain.getProteinDetectionList();
+        String proteinTable = proteinInfoMain.getProteinInfo();
            
         if (pdl != null) {
             
@@ -170,6 +175,7 @@ public class MzidToHTML {
             proteinInfoMainBuilder.append("<table> <table style = 'width:100%'>\n\t<tr>");
             proteinInfoMainBuilder.append("<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> "
                 + "\n<th>FDR Score</th> \n<th>Observed/Observable</th></tr>");
+            proteinInfoMainBuilder.append(proteinTable);
         }
         
         return proteinInfoMainBuilder.toString();
@@ -197,11 +203,8 @@ public class MzidToHTML {
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
-            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3
-            
-            
-            
-            fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
+            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
+            //fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             fileWriter.close();
         }
         
@@ -211,7 +214,7 @@ public class MzidToHTML {
     }
 
     public static void main(String[] args) {
-        String input = "GalaxyExamplePeptide.mzid";
+        String input = "GalaxyExampleProteoGrouper.mzid";
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));

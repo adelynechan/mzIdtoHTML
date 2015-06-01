@@ -7,7 +7,8 @@ package mzIdtoHTML;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import uk.ac.ebi.jmzidml.model.mzidml.AnalysisData;
 import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
 import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
@@ -35,13 +36,13 @@ public class ProteinInfo {
         ProteinInfo proteinInfo = new ProteinInfo();
         
         HashMap<String, DBSequence> proteinDbSequenceIdHashMap = peptideInfoProtein.getDbSequenceIdHashMap();
-        List<ProteinAmbiguityGroup> pagList = proteinInfo.getProteinDetectionList().getProteinAmbiguityGroup();
+        ProteinDetectionList pdl = proteinInfo.getProteinDetectionList();
+        List<ProteinAmbiguityGroup> pagList = pdl.getProteinAmbiguityGroup();
         
         StringBuilder proteinInfoBuilder = new StringBuilder();
-        String proteinName = new String();
         
         for (ProteinAmbiguityGroup pag : pagList) {
-           List<ProteinDetectionHypothesis> pdhList = pag.getProteinDetectionHypothesis();
+            List<ProteinDetectionHypothesis> pdhList = pag.getProteinDetectionHypothesis();        
            
             for (int i = 0; i < pdhList.size(); i++) {
                 DBSequence proteinDbSeq = proteinDbSequenceIdHashMap.get(pdhList.get(i).getDBSequenceRef());
@@ -50,7 +51,13 @@ public class ProteinInfo {
                 
                 for (int x = 0; x < proteinCvParamList.size(); x++) {
                     CvParam proteinCvParam = proteinCvParamList.get(x);
-                    proteinName = proteinCvParam.getValue(); 
+                    String proteinNameFull = proteinCvParam.getValue(); 
+                    Pattern pattern = Pattern.compile("OS=(.*?)GN");
+                    Matcher matcher = pattern.matcher(proteinNameFull);
+                    
+                    if (matcher.find()) {
+                        proteinInfoBuilder.append(matcher.group(1));
+                    }                
                 }     
                 
                 

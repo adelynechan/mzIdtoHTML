@@ -43,6 +43,7 @@ public class GlobalStatistics {
 //                }
 //            }
 //        }
-        return decoyNumber;
+        return 0;
+//        return decoyNumber;
     }
 }

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Set;
 import java.util.Iterator;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
@@ -24,23 +23,24 @@ public class PeptideInfo {
     public HashMap <String, Peptide> getPeptideIdHashmap () {
         HashMap<String, Peptide> peptideIdHashMap = new HashMap();
         Iterator<Peptide> iterPeptide = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
-            while (iterPeptide.hasNext()) {
-                Peptide peptide = iterPeptide.next();
-                peptideIdHashMap.put(peptide.getId(), peptide);
-            }   
+        while (iterPeptide.hasNext()) {
+            Peptide peptide = iterPeptide.next();
+            peptideIdHashMap.put(peptide.getId(), peptide);
+        }
         return peptideIdHashMap;
     }
-    
+    //Jun: should this be with protein or peptide? I think DBSequence is for protein sequences
     public HashMap <String, DBSequence> getDbSequenceIdHashMap() {
         HashMap<String, DBSequence> dbSequenceIdHashMap = new HashMap();
         Iterator<DBSequence> iterDBSequence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
-            while (iterDBSequence.hasNext()) {
-                DBSequence dbSequence = iterDBSequence.next();
-                dbSequenceIdHashMap.put(dbSequence.getId(), dbSequence);
-            }
+        while (iterDBSequence.hasNext()) {
+            DBSequence dbSequence = iterDBSequence.next();
+            dbSequenceIdHashMap.put(dbSequence.getId(), dbSequence);
+        }
         return dbSequenceIdHashMap;
     }
-    
+    //Jun: I would check the decoy status here as well, probably generate a decoy list containing ids for decoys
+    //then you do not need to iterate again to find out decoys.
     public HashMap <String, PeptideEvidence> getPeptideEvidenceIdHashMap() {
         HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = new HashMap();
         Iterator<PeptideEvidence> iterPeptideEvidence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
@@ -50,7 +50,7 @@ public class PeptideInfo {
             }
         return peptideEvidenceIdHashMap;
     }
-    
+    //Jun: what happened if the score is 23.4?
     private SortedMap <Integer, ArrayList<SpectrumIdentificationItem>> getScoreSiiSortedMap() {
         SortedMap <Integer, ArrayList<SpectrumIdentificationItem>> scoreSiiSortedMap = new TreeMap();
         
@@ -58,6 +58,7 @@ public class PeptideInfo {
                 (MzIdentMLElement.SpectrumIdentificationItem);
         while (iterSII.hasNext()) {
             SpectrumIdentificationItem sii = iterSII.next();
+            //Jun: how safe it is to assume that first CV param is the score. remember coding according to the xsd
             Integer score = Integer.parseInt(sii.getCvParam().get(0).getValue());
             
             if (scoreSiiSortedMap.containsKey(score)) {

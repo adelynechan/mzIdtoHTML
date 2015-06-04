@@ -184,27 +184,19 @@ public class MzidToHTML {
     public void convert(String input, String output) {
         
         // Name the results file "results.html" (String output in main method)
-        File htmlTemplateFile = new File(output);      
-        
-        // Create the file if it does not already exist
-        if (!htmlTemplateFile.exists()) {
-            try {
-                htmlTemplateFile.createNewFile();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }         
-        }
+        File htmlTemplateFile = new File(output);   
         
         try { 
             
             // New filewriter to write items to the results.html file
             FileWriter fileWriter = new FileWriter(htmlTemplateFile, true);
+ 
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
             fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
-            //fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
+            fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
+            
             fileWriter.close();
         }
         
@@ -214,12 +206,12 @@ public class MzidToHTML {
     }
 
     public static void main(String[] args) {
-        String input = "GalaxyExampleProteoGrouper.mzid";
+        String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
+        //String input = "Galaxy12MSGFHuman.mzid"; // Full dataset test file - currently takes very long to run
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);   
-
+        converter.convert(input, output);
     }
 }
         

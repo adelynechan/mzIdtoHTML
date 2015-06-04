@@ -8,6 +8,9 @@ package mzIdtoHTML;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.Set;
 import java.util.Iterator;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
@@ -47,7 +50,31 @@ public class PeptideInfo {
             }
         return peptideEvidenceIdHashMap;
     }
-       
+    
+    private SortedMap <Integer, ArrayList<SpectrumIdentificationItem>> getScoreSiiSortedMap() {
+        SortedMap <Integer, ArrayList<SpectrumIdentificationItem>> scoreSiiSortedMap = new TreeMap();
+        
+        Iterator <SpectrumIdentificationItem> iterSII = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
+                (MzIdentMLElement.SpectrumIdentificationItem);
+        while (iterSII.hasNext()) {
+            SpectrumIdentificationItem sii = iterSII.next();
+            Integer score = Integer.parseInt(sii.getCvParam().get(0).getValue());
+            
+            if (scoreSiiSortedMap.containsKey(score)) {
+                ArrayList siiList = scoreSiiSortedMap.get(score);
+                siiList.add(sii);
+                scoreSiiSortedMap.put(score, siiList);
+            }
+            
+            else {
+                ArrayList <SpectrumIdentificationItem> siiList = new ArrayList <SpectrumIdentificationItem>();
+                siiList.add(sii);
+                scoreSiiSortedMap.put(score, siiList);            
+            }
+        }
+        return scoreSiiSortedMap;
+    }        
+                             
     public List getSpectrumIdentificationList() {  
         DataCollection dc =  MzidToHTML.unmarshaller.unmarshal(DataCollection.class);
         AnalysisData ad = dc.getAnalysisData();  
@@ -64,9 +91,12 @@ public class PeptideInfo {
         HashMap<String, DBSequence> dbSequenceIdHashMap = peptideInfo.getDbSequenceIdHashMap();
         HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideInfo.getPeptideEvidenceIdHashMap();
         
-        // Get the list of Spectrum Identification elements
-        List<SpectrumIdentificationList> sil = peptideInfo.getSpectrumIdentificationList();
-        
+        // Sorted map for arranging by score
+        // Keys are the first element of score
+        // Values are the SpectrumIdentificationItems
+        SortedMap <Integer, ArrayList <SpectrumIdentificationItem>> scoreSiiSortedMap = peptideInfo.getScoreSiiSortedMap();
+        ArrayList <Integer> scores = new ArrayList<Integer>(scoreSiiSortedMap.keySet());
+                   
         // Initialise variables for the items that are to be returned
             // StringBuilder to be returned as a string containing all the peptide information
             // Single string representing a single row in the HTML table (with all elements included)
@@ -74,93 +104,82 @@ public class PeptideInfo {
         
             // ScoreName returned separately to be incorporated in table header
         String scoreName = new String();
+        
+        // Get the SII for each key-value pair in the SortedMap
+        // Extract peptide info for table from the SII value                  
+        for (int scoreNum = scores.size()-1; scoreNum >= 0; scoreNum--) {
+            ArrayList <SpectrumIdentificationItem> spectrumIdentItemList = scoreSiiSortedMap.get(scores.get(scoreNum));
+            
+            for (int siiNum = 0; siiNum < spectrumIdentItemList.size(); siiNum ++) {
+                SpectrumIdentificationItem spectrumIdentItem = spectrumIdentItemList.get(siiNum);
+                scoreName = spectrumIdentItem.getCvParam().get(0).getName();
 
-        // For each element in the list, extract the SpectrumIdentificationResult
-        // For each of the SpectrumIdentificationResult, extract the SpectrumIdentificationItem
-        // SpectrumIdentificationItem contains information related to the PSM
-        for (SpectrumIdentificationList sIdentList : sil) {
-            for (SpectrumIdentificationResult spectrumIdentResult: sIdentList.getSpectrumIdentificationResult()) {
-                for (SpectrumIdentificationItem spectrumIdentItem: spectrumIdentResult.getSpectrumIdentificationItem()) {
-
-                    // Column 1: SII number
-                    String spectrumIdItem = spectrumIdentItem.getId();
-                    
-                    // Column 2: Peptide sequence
-                    String peptideRef = spectrumIdentItem.getPeptideRef();
-                    Peptide peptide = peptideIdHashMap.get(peptideRef);
-                    String sequence = peptide.getPeptideSequence();                                 
-                                       
-                    // Column 3: Calculated mass to charge ratio
-                    Double calculatedMassToCharge =  spectrumIdentItem.getCalculatedMassToCharge();
-                    
-                    // Column 4: Experimental mass to charge ratio
-                    Double experimentalMassToCharge = spectrumIdentItem.getExperimentalMassToCharge();                           
-                    
-                    // Column 5: Charge
-                    int charge = spectrumIdentItem.getChargeState();
-                    
-                    // Column 6: Modifications
-                    List <Modification> modifications = peptide.getModification();
+                // PSM ID
+                String spectrumIdItem = spectrumIdentItem.getId();
+                      
+                // Peptide Sequence
+                String peptideSequence = peptideIdHashMap.get(spectrumIdentItem.getPeptideRef()).getPeptideSequence();
+            
+                // Calculated m/z ratio
+                Double calculatedMassToCharge =  spectrumIdentItem.getCalculatedMassToCharge();
+            
+                // Experimental m/z ratio
+                Double experimentalMassToCharge = spectrumIdentItem.getExperimentalMassToCharge(); 
+            
+                // Charge
+                int charge = spectrumIdentItem.getChargeState();
+            
+                // Modifications
+                List <Modification> modifications = peptideIdHashMap.get(spectrumIdentItem.getPeptideRef()).getModification();
                     StringBuilder modificationsBuilder = new StringBuilder();
                     
-                    if (peptide.getModification().isEmpty()) {
+                    if (peptideIdHashMap.get(spectrumIdentItem.getPeptideRef()).getModification().isEmpty()) {
                         modificationsBuilder.append("None");
                     }
                     
                     else {
-                        for (Modification modification: peptide.getModification()) {
+                        for (Modification modification: peptideIdHashMap.get(spectrumIdentItem.getPeptideRef()).getModification()) {
                             modificationsBuilder.append(modification);
                         }
                     }
-                    
-                    // Column 7: Score
-                    // The first element of score is used 
-                    // The type of score is represented in the header column
-                    List<CvParam> spectIdentParam = spectrumIdentItem.getCvParam();
-                    CvParam firstScore = spectIdentParam.get(0);
-                    scoreName = firstScore.getName();
-                    String scoreValue = firstScore.getValue();
-                    
-                    // Column 8: Associated proteins
-                    List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
-                    String proteinName = new String();
-                    
-                    for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
-                        PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(i);
-                        PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideEvidenceRef.getPeptideEvidenceRef());
 
-                        DBSequence dbSeq = dbSequenceIdHashMap.get(peptideEvidence.getDBSequenceRef());
-                        List<CvParam> dbSeqCvParamList = dbSeq.getCvParam();
+                // Associated Proteins                   
+                List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
+                String proteinName = new String();
+            
+                for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
+                    PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideEvidenceRefList.get(i).getPeptideEvidenceRef());
+
+                    DBSequence dbSeq = dbSequenceIdHashMap.get(peptideEvidence.getDBSequenceRef());
+                    List<CvParam> dbSeqCvParamList = dbSeq.getCvParam();
                         
-                        for (int x = 0; x < dbSeqCvParamList.size(); x++) {
-                            CvParam dbSeqCvParam = dbSeqCvParamList.get(x);
-                            proteinName = dbSeqCvParam.getValue();
-                        }
-                    }    
-                                                                               
-                    String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
-                    String printSequence = "<td> " + sequence + " </td>";
-                    String printCalculatedMassToCharge = "<td> <div style = \"text-align:right\">" + String.format("%.2f", calculatedMassToCharge) + " </td>";
-                    String printExperimentalMassToCharge = "<td> <div style = \"text-align:right\">" + String.format("%.2f", experimentalMassToCharge) + " </td>";
-                    String printCharge = "<td> <div style = \"text-align:center\">" + charge + " </td>";
-                    String printModifications = "<td> " + modificationsBuilder.toString() + " </td>";
-                    String printScore = "<td> <div style = \"text-align:center\">" + scoreValue + " </td>";
-                    String printAssociatedProteins = "<td> " + proteinName + " </td>";
-                    
-                    peptideInfoBuilder.append("<tr>");
-                    peptideInfoBuilder.append(printSpectrumIdItem);
-                    peptideInfoBuilder.append(printSequence); 
-                    peptideInfoBuilder.append(printCalculatedMassToCharge);
-                    peptideInfoBuilder.append(printExperimentalMassToCharge);
-                    peptideInfoBuilder.append(printCharge);
-                    peptideInfoBuilder.append(printModifications);
-                    peptideInfoBuilder.append(printScore);
-                    peptideInfoBuilder.append(printAssociatedProteins);
-                    peptideInfoBuilder.append("</tr>");                                    
-                }                                                                                  
-            }                         
-        }  
-        
+                    for (int x = 0; x < dbSeqCvParamList.size(); x++) {
+                        proteinName = dbSeqCvParamList.get(x).getValue();
+                    }
+                }
+            
+            String printSpectrumIdItem = "<td> " + spectrumIdItem + " </td>";
+            String printSequence = "<td> " + peptideSequence + " </td>";
+            String printCalculatedMassToCharge = "<td> <div style = \"text-align:right\">" + String.format("%.2f", calculatedMassToCharge) + " </td>";
+            String printExperimentalMassToCharge = "<td> <div style = \"text-align:right\">" + String.format("%.2f", experimentalMassToCharge) + " </td>";
+            String printCharge = "<td> <div style = \"text-align:center\">" + charge + " </td>";
+            String printModifications = "<td> " + modificationsBuilder.toString() + " </td>";
+            String printScore = "<td> <div style = \"text-align:center\">" + scores.get(scoreNum) + " </td>";
+            String printAssociatedProteins = "<td> " + proteinName + " </td>";
+            
+            peptideInfoBuilder.append("<tr>");
+            peptideInfoBuilder.append(printSpectrumIdItem);
+            peptideInfoBuilder.append(printSequence);
+            peptideInfoBuilder.append(printCalculatedMassToCharge);
+            peptideInfoBuilder.append(printExperimentalMassToCharge);
+            peptideInfoBuilder.append(printCharge);
+            peptideInfoBuilder.append(printModifications);
+            peptideInfoBuilder.append(printScore);
+            peptideInfoBuilder.append(printAssociatedProteins);
+            peptideInfoBuilder.append("</tr>");
+            }
+        }
+                                 
         List<String> peptideInfoReturn = new ArrayList<String>();
         peptideInfoReturn.add(peptideInfoBuilder.toString());
         peptideInfoReturn.add(scoreName);
@@ -168,3 +187,6 @@ public class PeptideInfo {
         return peptideInfoReturn;
     }
 }
+        
+
+ 

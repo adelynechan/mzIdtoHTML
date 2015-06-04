@@ -50,28 +50,41 @@ public class ProteinInfo {
                 int listSize = proteinCvParamList.size();
                 
                 for (int x = 0; x < proteinCvParamList.size(); x++) {
+                    String accessionCode = new String();
+                    String speciesName = new String();
+                    String proteinName = new String();
+                    String fdrScore = new String();
+                    String obsObs = new String();
+                    
                     CvParam proteinCvParam = proteinCvParamList.get(x);
                     String proteinNameFull = proteinCvParam.getValue(); 
-                    Pattern pattern = Pattern.compile("OS=(.*?)GN");
-                    Matcher matcher = pattern.matcher(proteinNameFull);
+                                    
+                    Pattern patternAcc = Pattern.compile("tr\\|(.*?)\\|");
+                    Matcher matcherAcc = patternAcc.matcher(proteinNameFull);
                     
-                    if (matcher.find()) {
-                        proteinInfoBuilder.append(matcher.group(1));
-                    }                
-                }     
-                
-                
-            
-            } 
-        }
-        
+                    Pattern patternSpe = Pattern.compile("OS=(.*?)GN");
+                    Matcher matcherSpe = patternSpe.matcher(proteinNameFull);
+                    
+                    Pattern patternName = Pattern.compile("\\s(.*?)OS=");
+                    Matcher matcherName = patternName.matcher(proteinNameFull);
+                                        
+                    if (matcherAcc.find() && matcherSpe.find() && matcherName.find()) {
+                        accessionCode = "<td>" + matcherAcc.group(1) + "</td>";                                             
+                        speciesName = "<td>" + matcherSpe.group(1) + "</td>"; 
+                        proteinName = "<td>" + matcherName.group(1) + "</td>";                         
+                    }
+                    
+                    proteinInfoBuilder.append("<tr>");
+                    proteinInfoBuilder.append(accessionCode);
+                    proteinInfoBuilder.append(speciesName);
+                    proteinInfoBuilder.append(proteinName);
+                    proteinInfoBuilder.append(fdrScore);
+                    proteinInfoBuilder.append(obsObs);
+                    proteinInfoBuilder.append("</tr>");
+                } 
+            }
+        }   
         return proteinInfoBuilder.toString();
-    }
-    
- 
-                
-                
-                        
-        
-    }
+    }                        
+}
 

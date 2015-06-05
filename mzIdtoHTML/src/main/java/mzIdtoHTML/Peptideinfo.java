@@ -51,16 +51,16 @@ public class PeptideInfo {
         return peptideEvidenceIdHashMap;
     }
     //Jun: what happened if the score is 23.4?
-    private SortedMap <Integer, ArrayList<SpectrumIdentificationItem>> getScoreSiiSortedMap() {
-        SortedMap <Integer, ArrayList<SpectrumIdentificationItem>> scoreSiiSortedMap = new TreeMap();
+    private SortedMap <Double, ArrayList<SpectrumIdentificationItem>> getScoreSiiSortedMap() {
+        SortedMap <Double, ArrayList<SpectrumIdentificationItem>> scoreSiiSortedMap = new TreeMap();
         
         Iterator <SpectrumIdentificationItem> iterSII = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
                 (MzIdentMLElement.SpectrumIdentificationItem);
         while (iterSII.hasNext()) {
             SpectrumIdentificationItem sii = iterSII.next();
             //Jun: how safe it is to assume that first CV param is the score. remember coding according to the xsd
-            Integer score = Integer.parseInt(sii.getCvParam().get(0).getValue());
-            
+            Double score = Double.parseDouble(sii.getCvParam().get(0).getValue());
+        
             if (scoreSiiSortedMap.containsKey(score)) {
                 ArrayList siiList = scoreSiiSortedMap.get(score);
                 siiList.add(sii);
@@ -95,8 +95,8 @@ public class PeptideInfo {
         // Sorted map for arranging by score
         // Keys are the first element of score
         // Values are the SpectrumIdentificationItems
-        SortedMap <Integer, ArrayList <SpectrumIdentificationItem>> scoreSiiSortedMap = peptideInfo.getScoreSiiSortedMap();
-        ArrayList <Integer> scores = new ArrayList<Integer>(scoreSiiSortedMap.keySet());
+        SortedMap <Double, ArrayList <SpectrumIdentificationItem>> scoreSiiSortedMap = peptideInfo.getScoreSiiSortedMap();
+        ArrayList <Double> scores = new ArrayList<Double>(scoreSiiSortedMap.keySet());
                    
         // Initialise variables for the items that are to be returned
             // StringBuilder to be returned as a string containing all the peptide information

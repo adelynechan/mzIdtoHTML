@@ -20,36 +20,7 @@ import uk.ac.ebi.jmzidml.MzIdentMLElement;
  */
 public class PeptideInfo {
     
-    public HashMap <String, Peptide> getPeptideIdHashmap () {
-        HashMap<String, Peptide> peptideIdHashMap = new HashMap();
-        Iterator<Peptide> iterPeptide = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
-        while (iterPeptide.hasNext()) {
-            Peptide peptide = iterPeptide.next();
-            peptideIdHashMap.put(peptide.getId(), peptide);
-        }
-        return peptideIdHashMap;
-    }
-    //Jun: should this be with protein or peptide? I think DBSequence is for protein sequences
-    public HashMap <String, DBSequence> getDbSequenceIdHashMap() {
-        HashMap<String, DBSequence> dbSequenceIdHashMap = new HashMap();
-        Iterator<DBSequence> iterDBSequence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);
-        while (iterDBSequence.hasNext()) {
-            DBSequence dbSequence = iterDBSequence.next();
-            dbSequenceIdHashMap.put(dbSequence.getId(), dbSequence);
-        }
-        return dbSequenceIdHashMap;
-    }
-    //Jun: I would check the decoy status here as well, probably generate a decoy list containing ids for decoys
-    //then you do not need to iterate again to find out decoys.
-    public HashMap <String, PeptideEvidence> getPeptideEvidenceIdHashMap() {
-        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = new HashMap();
-        Iterator<PeptideEvidence> iterPeptideEvidence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
-            while (iterPeptideEvidence.hasNext()) {
-                PeptideEvidence peptideEvidence = iterPeptideEvidence.next();
-                peptideEvidenceIdHashMap.put(peptideEvidence.getId(), peptideEvidence);
-            }
-        return peptideEvidenceIdHashMap;
-    }
+    
     //Jun: what happened if the score is 23.4?
     private SortedMap <Double, ArrayList<SpectrumIdentificationItem>> getScoreSiiSortedMap() {
         SortedMap <Double, ArrayList<SpectrumIdentificationItem>> scoreSiiSortedMap = new TreeMap();
@@ -76,7 +47,7 @@ public class PeptideInfo {
         return scoreSiiSortedMap;
     }        
                              
-    public List getSpectrumIdentificationList() {  
+    private List getSpectrumIdentificationList() {  
         DataCollection dc =  MzidToHTML.unmarshaller.unmarshal(DataCollection.class);
         AnalysisData ad = dc.getAnalysisData();  
         List<SpectrumIdentificationList> sil = ad.getSpectrumIdentificationList();
@@ -86,11 +57,13 @@ public class PeptideInfo {
     
     List<String> getPeptideInfo() {
         
-        // Get the hashmaps required for accessing information for each SpectrumIdentificationItem
+        MzidData mzidDataPeptide = new MzidData();     
         PeptideInfo peptideInfo = new PeptideInfo();
-        HashMap<String, Peptide> peptideIdHashMap = peptideInfo.getPeptideIdHashmap();
-        HashMap<String, DBSequence> dbSequenceIdHashMap = peptideInfo.getDbSequenceIdHashMap();
-        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideInfo.getPeptideEvidenceIdHashMap();
+        
+        // Get the hashmaps required for accessing information for each SpectrumIdentificationItem       
+        HashMap<String, Peptide> peptideIdHashMap = mzidDataPeptide.getPeptideIdHashmap();
+        HashMap<String, DBSequence> dbSequenceIdHashMap = mzidDataPeptide.getDbSequenceIdHashMap();
+        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = mzidDataPeptide.getPeptideEvidenceIdHashMap().get(0);
         
         // Sorted map for arranging by score
         // Keys are the first element of score

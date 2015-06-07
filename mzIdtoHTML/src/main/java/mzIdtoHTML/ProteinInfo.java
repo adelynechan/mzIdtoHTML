@@ -32,10 +32,10 @@ public class ProteinInfo {
     }
     
     String getProteinInfo() {
-        PeptideInfo peptideInfoProtein = new PeptideInfo();
+        MzidData mzidDataProtein = new MzidData();
         ProteinInfo proteinInfo = new ProteinInfo();
         
-        HashMap<String, DBSequence> proteinDbSequenceIdHashMap = peptideInfoProtein.getDbSequenceIdHashMap();
+        HashMap<String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
         ProteinDetectionList pdl = proteinInfo.getProteinDetectionList();
         List<ProteinAmbiguityGroup> pagList = pdl.getProteinAmbiguityGroup();
         

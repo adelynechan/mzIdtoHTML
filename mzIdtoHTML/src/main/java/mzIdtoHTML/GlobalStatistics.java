@@ -5,45 +5,31 @@
  */
 package mzIdtoHTML;
 
+import java.util.HashMap;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
+
 /**
  *
  * @author Adelyne
  */
 public class GlobalStatistics {
-    PeptideInfo peptideInfo;
+        
+    MzidData mzidDataStats = new MzidData(); 
     
-    public GlobalStatistics(){
-        peptideInfo = new PeptideInfo();
+    int getPeptideNumber() {           
+        return mzidDataStats.getPeptideIdHashmap().size();   
     }
     
-    int getPeptideNumber() {    
-        return peptideInfo.getPeptideIdHashmap().size();   
-    }
-    
-    int getDecoyPercentage() {     
+    Double getDecoyPercentage() {     
         GlobalStatistics globalStatistics = new GlobalStatistics();
+        
+        // Get number of peptide matches
         int peptideNumber = globalStatistics.getPeptideNumber();
         
-//        List<SpectrumIdentificationList> sil = peptideInfo.getSpectrumIdentificationList();
-//        int decoyNumber = 0;
-//        
-//        for (SpectrumIdentificationList sIdentList : sil) {
-//            for (SpectrumIdentificationResult spectrumIdentResult: sIdentList.getSpectrumIdentificationResult()) {
-//                for (SpectrumIdentificationItem spectrumIdentItem: spectrumIdentResult.getSpectrumIdentificationItem()) {
-//                    List<PeptideEvidenceRef> peptideEvidenceRefList = spectrumIdentItem.getPeptideEvidenceRef();
-//                    
-//                    for (int i = 0; i < peptideEvidenceRefList.size(); i++) {
-//                        PeptideEvidenceRef peptideEvidenceRef = peptideEvidenceRefList.get(i);
-//                        PeptideEvidence peptideEvidence = peptideInfo.getPeptideEvidenceIdHashMap().get(peptideEvidenceRef.getPeptideEvidenceRef());
-//                        
-//                        if (peptideEvidence.isIsDecoy()) {
-//                            decoyNumber += 1;  
-//                        }      
-//                    }
-//                }
-//            }
-//        }
-        return 0;
-//        return decoyNumber;
+        // Get number of decoy peptide matches
+        int decoyNumber = mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();      
+        
+        // Calculate decoy percentage and return
+        return (double)(decoyNumber) / (double)(peptideNumber) * 100;
     }
 }

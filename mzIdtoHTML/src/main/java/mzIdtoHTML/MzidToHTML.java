@@ -117,13 +117,12 @@ public class MzidToHTML {
         statisticsBuilder.append("<h2> Global Statistics </h2>");
         
         int peptideNumber = globalStatistics.getPeptideNumber();
-        //int peptideDecoyPercentage = globalStatistics.getDecoyPercentage();
-        //think about how to get the decoy percentage? current method takes too long 
+        Double decoyPercentage = globalStatistics.getDecoyPercentage();
         
         statisticsBuilder.append("Peptide Number: ");
         statisticsBuilder.append(Integer.toString(peptideNumber));
-        //statisticsBuilder.append("Decoy Percentage: " );
-        //statisticsBuilder.append(peptideDecoyString);
+        statisticsBuilder.append("Decoy Percentage: " );
+        statisticsBuilder.append(String.format("%.2f", decoyPercentage));
         
         // Convert stringbuilder to a string and return
         return statisticsBuilder.toString();
@@ -192,7 +191,7 @@ public class MzidToHTML {
             FileWriter fileWriter = new FileWriter(htmlTemplateFile, true);
  
             fileWriter.append(getHeader(input)); // Header
-            fileWriter.append(getMetadata()); // Metadata menu item 1
+            //fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
             fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
             fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
@@ -211,7 +210,10 @@ public class MzidToHTML {
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);
+        //converter.convert(input, output);
+        
+        Metadata metadataTest = new Metadata();
+        System.out.println(metadataTest.getSearchType());
     }
 }
         

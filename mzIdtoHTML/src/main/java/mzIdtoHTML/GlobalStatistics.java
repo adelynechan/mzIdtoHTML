@@ -24,7 +24,7 @@ public class GlobalStatistics {
         int peptideNumber = globalStatistics.getPeptideNumber();
         
         // Get number of decoy peptide matches
-        int decoyNumber = mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();      
+        int decoyNumber =  mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();   
         
         // Calculate decoy percentage and return
         return (double)(decoyNumber) / (double)(peptideNumber) * 100;

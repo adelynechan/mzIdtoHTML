@@ -5,16 +5,13 @@
  */
 package mzIdtoHTML;
 
-import java.util.HashMap;
-import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
-
 /**
  *
  * @author Adelyne
  */
 public class GlobalStatistics {
         
-    MzidData mzidDataStats = new MzidData(); 
+    MzidData mzidDataStats = new MzidData();
     
     int getPeptideNumber() {           
         return mzidDataStats.getPeptideIdHashmap().size();   
@@ -31,5 +28,13 @@ public class GlobalStatistics {
         
         // Calculate decoy percentage and return
         return (double)(decoyNumber) / (double)(peptideNumber) * 100;
+    }
+    
+    Double getGlobalFDR() {
+        GlobalStatistics globalStatistics = new GlobalStatistics();
+        int peptideNumber = globalStatistics.getPeptideNumber();
+        int decoyNumber = mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();
+        
+        return 100 * (2 * (double)(decoyNumber)) / (double)(peptideNumber);     
     }
 }

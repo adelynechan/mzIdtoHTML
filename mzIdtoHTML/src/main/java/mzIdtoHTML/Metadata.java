@@ -6,9 +6,11 @@
 package mzIdtoHTML;
 
 
+import java.util.Iterator;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 
 import java.util.List;
+import uk.ac.ebi.jmzidml.MzIdentMLElement;
 
 /**
  *
@@ -24,7 +26,6 @@ public class Metadata {
     String getSearchType() {
 
         SpectrumIdentificationProtocol sip = MzidToHTML.unmarshaller.unmarshal(SpectrumIdentificationProtocol.class);
-        // Jun: would like to see the definition in xsd, which determines whether it is needed to check searchTypeParam == null        
         Param searchTypeParam = sip.getSearchType();
         CvParam searchCv = searchTypeParam.getCvParam();
         String searchType = searchCv.getName();
@@ -36,20 +37,23 @@ public class Metadata {
     // <xsd:element name="AnalysisSoftware" type="AnalysisSoftwareType" maxOccurs="unbounded"/>
     // <xsd:documentation> The software packages used to perform the analyses  
     String getSoftwareName() {
-
-        AnalysisSoftware as = MzidToHTML.unmarshaller.unmarshal(AnalysisSoftware.class);
-        Param softwareType = as.getSoftwareName();
         
-        // For the software name, the maxOccurs is unbounded which suggests that there may be more than one
-        // However I cannot extract as a list...
+        StringBuilder softwareNameBuilder = new StringBuilder();
         
-        if(softwareType == null) {
-            return "Information not available";
-        }   
-        
-        else {
-            return as.getSoftwareName().getCvParam().getName();
-        }
+        Iterator <AnalysisSoftware> iterAS = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.AnalysisSoftware);
+        while (iterAS.hasNext()) {
+            AnalysisSoftware as = iterAS.next();
+            Param softwareType = as.getSoftwareName();
+            
+            if (softwareType == null) {
+                softwareNameBuilder.append("Information not available");
+            }
+            
+            else {
+                softwareNameBuilder.append(as.getSoftwareName().getCvParam().getName());
+            }
+        } 
+        return softwareNameBuilder.toString();
     }
 
     // Enzyme(s) (if empty return "Information not available")

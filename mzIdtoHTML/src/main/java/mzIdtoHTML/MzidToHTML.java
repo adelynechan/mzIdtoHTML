@@ -210,10 +210,8 @@ public class MzidToHTML {
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        //converter.convert(input, output);
-        
-        Metadata metadataTest = new Metadata();
-        System.out.println(metadataTest.getSearchType());
+        converter.convert(input, output);
+
     }
 }
         

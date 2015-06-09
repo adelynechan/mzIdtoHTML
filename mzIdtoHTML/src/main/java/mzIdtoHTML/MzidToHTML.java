@@ -145,8 +145,6 @@ public class MzidToHTML {
         StringBuilder peptideInfoMainBuilder = new StringBuilder();
         
         List<String> peptideView = peptideInfoMain.getPeptideInfo(); // Method returns a list with 2 elements
-        String peptideTable = peptideView.get(0); // String containing contents of HTML table
-        String scoreName = peptideView.get(1); // String containing type of score (for table header)
         
         // Create the main header "Peptide View"
         peptideInfoMainBuilder.append("<h2> Peptide View </h2>");
@@ -171,16 +169,18 @@ public class MzidToHTML {
     private String getProteinInfoMain() {
         ProteinInfo proteinInfoMain = new ProteinInfo();
         StringBuilder proteinInfoMainBuilder = new StringBuilder();
+        
         ProteinDetectionList pdl = proteinInfoMain.getProteinDetectionList();
-        String proteinTable = proteinInfoMain.getProteinInfo();
+        List <String> proteinView = proteinInfoMain.getProteinInfo();
+        
            
-        if (pdl != null) {
-            
+        if (pdl != null) {           
             proteinInfoMainBuilder.append("<h2> Protein View </h2>");
             proteinInfoMainBuilder.append("<table> <table style = 'width:100%'>\n\t<tr>");
-            proteinInfoMainBuilder.append("<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> "
-                + "\n<th>FDR Score</th> \n<th>Observed/Observable</th></tr>");
-            proteinInfoMainBuilder.append(proteinTable);
+            proteinInfoMainBuilder.append("<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
+            proteinInfoMainBuilder.append(proteinView.get(1));
+            proteinInfoMainBuilder.append("</th> \n<th>Observed/Observable</th></tr>");
+            proteinInfoMainBuilder.append(proteinView.get(0));
         }
         
         return proteinInfoMainBuilder.toString();
@@ -217,7 +217,6 @@ public class MzidToHTML {
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);
-
     }
 }
         

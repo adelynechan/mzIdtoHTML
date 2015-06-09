@@ -6,6 +6,7 @@
 package mzIdtoHTML;
 
 import java.util.List;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.SortedMap;
@@ -20,17 +21,44 @@ import uk.ac.ebi.jmzidml.MzIdentMLElement;
  */
 public class PeptideInfo {
     
+    private HashMap <String, String> getSoftwareScoreHashMap() {
+        HashMap <String, String> softwareScoreHashMap = new HashMap();       
+        
+        softwareScoreHashMap.put("MS-GF+", "MS:1002049"); // MS-GF+, MS-GF+ Raw Score
+        softwareScoreHashMap.put("Mascot", "MS:1001171"); // Mascot, Mascot: Score
+        softwareScoreHashMap.put("Sequest", "MS:1001154"); // Sequest, Sequest Probability
+              
+        return softwareScoreHashMap;
+    }
     
-    //Jun: what happened if the score is 23.4?
     private SortedMap <Double, ArrayList<SpectrumIdentificationItem>> getScoreSiiSortedMap() {
         SortedMap <Double, ArrayList<SpectrumIdentificationItem>> scoreSiiSortedMap = new TreeMap();
         
+        PeptideInfo peptideInfo = new PeptideInfo();      
+        HashMap <String, String> softwareScoreHashMap = peptideInfo.getSoftwareScoreHashMap();
+        ArrayList <String> softwareList = new ArrayList <String>(softwareScoreHashMap.keySet());
+              
+        Metadata metadataPeptide = new Metadata();
+        String analysisSoftware = metadataPeptide.getSoftwareName();
+
+                
         Iterator <SpectrumIdentificationItem> iterSII = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
                 (MzIdentMLElement.SpectrumIdentificationItem);
         while (iterSII.hasNext()) {
             SpectrumIdentificationItem sii = iterSII.next();
             //Jun: how safe it is to assume that first CV param is the score. remember coding according to the xsd
-            Double score = Double.parseDouble(sii.getCvParam().get(0).getValue());
+            
+            int cvParamNum = 0;
+        
+            if (softwareList.contains(analysisSoftware)) {
+                String scoreName = softwareScoreHashMap.get(analysisSoftware);
+                String softwareNameCvParam = sii.getCvParam().get(cvParamNum).getName();
+                while (!softwareNameCvParam.equals(scoreName)) {
+                    cvParamNum = cvParamNum + 1;
+                }
+            }
+            
+            Double score = Double.parseDouble(sii.getCvParam().get(cvParamNum).getValue());
         
             if (scoreSiiSortedMap.containsKey(score)) {
                 ArrayList siiList = scoreSiiSortedMap.get(score);

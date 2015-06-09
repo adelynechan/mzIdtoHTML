@@ -199,7 +199,7 @@ public class MzidToHTML {
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
-            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
+            //fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
             fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             
             fileWriter.close();
@@ -217,6 +217,7 @@ public class MzidToHTML {
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);
+
     }
 }
         

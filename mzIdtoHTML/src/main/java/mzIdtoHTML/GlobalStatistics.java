@@ -24,6 +24,8 @@ public class GlobalStatistics {
         int peptideNumber = globalStatistics.getPeptideNumber();
         
         // Get number of decoy peptide matches
+        // mzidDataStats.getPeptideEvidenceIdHashMap returns an arraylist of 2 hashmaps
+        // The second hashmap in the arraylist is the decoy entries in the input file
         int decoyNumber =  mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();   
         
         // Calculate decoy percentage and return
@@ -33,8 +35,7 @@ public class GlobalStatistics {
     Double getGlobalFDR() {
         GlobalStatistics globalStatistics = new GlobalStatistics();
         int peptideNumber = globalStatistics.getPeptideNumber();
-        int decoyNumber = mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();
-        
+        int decoyNumber = mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();      
         return 100 * (2 * (double)(decoyNumber)) / (double)(peptideNumber);     
     }
 }

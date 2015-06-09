@@ -31,6 +31,7 @@ public class MzidData {
     }
     
     // Hashmap with DB sequence ID as key and DBSequence as value
+    // <xsd:element name="DBSequence" type="DBSequenceType" minOccurs="1" maxOccurs="unbounded"/>
     public HashMap <String, DBSequence> getDbSequenceIdHashMap() {
         HashMap<String, DBSequence> dbSequenceIdHashMap = new HashMap();
         Iterator<DBSequence> iterDBSequence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.DBSequence);

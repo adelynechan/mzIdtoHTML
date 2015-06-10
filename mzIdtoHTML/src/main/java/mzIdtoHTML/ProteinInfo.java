@@ -97,14 +97,33 @@ public class ProteinInfo {
                     // Initialise the strings for values which are going to be extracted from the CVParam            
                     String accessionCode = new String();
                     String speciesName = new String();
-                    String proteinName = new String();
+                    String proteinName = "<td> Not Available </td>"; // Cv param with full name is not always available
                     String pdhScore = new String();
                     String obsObs = new String();           
                 
                     // Get the DBSequence ID from the PDH and then look up the DBSequence from the hashmap    
                     // Get the sequence of each PDH from the DbSequence HashMap
                     DBSequence proteinDbSeq = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef());
-                
+                    String proteinDbAccession = proteinDbSeq.getAccession();
+                    
+                    Pattern patternAcc = Pattern.compile("tr\\|(.*?)\\|");
+                    Matcher matcherAcc = patternAcc.matcher(proteinDbAccession);
+                    if (matcherAcc.find()) {
+                        accessionCode = "<td>" + matcherAcc.group(1) + "</td>";
+                    }
+                    
+                    // The code for the species is extracted from the Db Accession 
+                    // Because sometimes the full species name (in the CvParam) is not available
+                    // In these cases only the 5-alphanumeric character code for species is shown
+                    Pattern patternSpeShort = Pattern.compile(".*_(.*)$");
+                    Matcher matcherSpeShort = patternSpeShort.matcher(proteinDbAccession);
+                    String speciesNameShort = new String();
+
+                    String speciesNameFull = " ";
+                    if (matcherSpeShort.find()) {
+                        speciesNameShort = matcherSpeShort.group(1);
+                    }
+                                
                     // Get the list of CvParam which are associated with DBSequence
                     // <xsd:group ref="ParamGroup" minOccurs="0" maxOccurs="unbounded">
                     // <xsd:documentation> Additional descriptors for the sequence, such as taxon, description line etc
@@ -121,23 +140,24 @@ public class ProteinInfo {
                             String proteinNameFull = DbSeqCvParam.getValue(); 
                     
                             // Regex to extract the accession code, species name and protein name
-                            Pattern patternAcc = Pattern.compile("tr\\|(.*?)\\|");
-                            Matcher matcherAcc = patternAcc.matcher(proteinNameFull);
                     
                             Pattern patternSpe = Pattern.compile("OS=(.*?)GN");
                             Matcher matcherSpe = patternSpe.matcher(proteinNameFull);
-                    
+                             
                             Pattern patternName = Pattern.compile("\\s(.*?)OS=");
                             Matcher matcherName = patternName.matcher(proteinNameFull);
-                    
-                            // Format with HTML tags <td> because these variables are to be added to protein view table
-                            if (matcherAcc.find() && matcherSpe.find() && matcherName.find()) {
-                                accessionCode = "<td>" + matcherAcc.group(1) + "</td>";                                             
-                                speciesName = "<td>" + matcherSpe.group(1) + "</td>"; 
+                   
+                            if (matcherSpe.find()) {
+                                speciesNameFull = "- " + matcherSpe.group(1);
+                            }
+                            
+                            if (matcherName.find()) {                                           
                                 proteinName = "<td>" + matcherName.group(1) + "</td>";                         
                             }  
-                        }
+                        }              
                     }
+                    
+                    speciesName = "<td>" + speciesNameShort + speciesNameFull + "</td>";
                 
                     // Get the CV Param list associated with each PDH 
                     // <xsd:group ref="ParamGroup" minOccurs="0" maxOccurs="unbounded">
@@ -155,8 +175,16 @@ public class ProteinInfo {
                             pdhScoreType = pdhCvParam.getName();
                             Double pdhScoreDouble = Double.parseDouble(pdhCvParam.getValue());
                             pdhScore = "<td>" + String.format("%.2f", pdhScoreDouble) + "</td>";
+                        }           
+                        
+                        // id: MS:1001097
+                        // name: distinct peptide sequences
+                        // This counts distinct sequences hitting the protein without regard to a minimal confidence threshold
+                        if (pdhCvParam.getAccession().equals("MS:1001097")) {
+                            Double peptidesObserved = Double.parseDouble(pdhCvParam.getValue());
                         }
-                    }              
+                    }                  
+                    
                     proteinInfoBuilder.append("<tr>");
                     proteinInfoBuilder.append(accessionCode);
                     proteinInfoBuilder.append(speciesName);
@@ -176,124 +204,3 @@ public class ProteinInfo {
     }
 }
     
-//    List <String> getProteinInfo() {
-//        MzidData mzidDataProtein = new MzidData();
-//        ProteinInfo proteinInfo = new ProteinInfo();
-//        
-//        // Get ProteinDetectionList 
-//        // <xsd:element name="ProteinDetectionList" type="ProteinDetectionListType" minOccurs="0"/>
-//        ProteinDetectionList pdl = proteinInfo.getProteinDetectionList();
-//        
-//        // Get Protein Ambiguity Groups from the pdl if pdl is not null
-//        // <xsd:element name="ProteinAmbiguityGroup" type="ProteinAmbiguityGroupType" minOccurs="0" maxOccurs="unbounded"/>
-//        // <xsd:complexType name="ProteinAmbiguityGroupType">
-//        // <xsd:documentation> A set of logically related results from a protein detection, 
-//        // for example to represent conflicting assignments of peptides to proteins
-//        List <ProteinAmbiguityGroup> pagList = new ArrayList <ProteinAmbiguityGroup>();
-//        if (pdl != null) {
-//            pagList = pdl.getProteinAmbiguityGroup();
-//        }
-//        
-//        // Retrieve the HashMap which maps DBSequence IDs to DBSequence 
-//        HashMap<String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
-//        
-//        StringBuilder proteinInfoBuilder = new StringBuilder();
-//        String pdhScoreType = new String();
-//        
-//        for (ProteinAmbiguityGroup pag : pagList) {   
-//                        
-//            // For each pag, get a list of the ProteinDetectionHypothesis it contains
-//            // <xsd:complexType name="ProteinDetectionHypothesisType">
-//            // <xsd:documentation> A single result of the ProteinDetection analysis (i.e. a protein)
-//            
-//            // <ProteinDetectionHypothesis> (PDH) elements in mzIdentML (representing single protein database entries)
-//            // are constructed by referencing all PSMs (that pass the threshold, if specified) 
-//            // that have a mapping to the current protein accession (Ghali 2013)
-//            List <ProteinDetectionHypothesis> pdhList = pag.getProteinDetectionHypothesis();   
-//            
-//            // Iterate through the list of PDHs 
-//            for (int pdhNum = 0; pdhNum < pdhList.size(); pdhNum++) {
-//                
-//                // Initialise the strings for values which are going to be extracted from the CVParam            
-//                String accessionCode = new String();
-//                String speciesName = new String();
-//                String proteinName = new String();
-//                String pdhScore = new String();
-//                String obsObs = new String();
-//                
-//                // Get the CV Param list associated with each PDH 
-//                // <xsd:group ref="ParamGroup" minOccurs="0" maxOccurs="unbounded">
-//                // <xsd:documentation> Scores or parameters associated with this ProteinDetectionHypothesis e.g. p-value
-//                List <CvParam> pdhCvParamList = pdhList.get(pdhNum).getCvParam();
-//                
-//                // Extract the score which is stored as a value in the CvParam
-//                // Also extract the type of score 
-//                for (int pdhCvParamNum = 0; pdhCvParamNum < pdhCvParamList.size(); pdhCvParamNum++) {
-//                    CvParam pdhCvParam = pdhCvParamList.get(pdhCvParamNum);
-//                    if (pdhCvParam.getName().contains("score")) {
-//                        // Type of score that is displayed in the Protein View table
-//                        // Will usually be PDH Score 
-//                        // A PDHScore is created for each PDH by summing the PSM scores according to the user parameters (Ghali 2013)
-//                        pdhScoreType = pdhCvParam.getName();
-//                        Double pdhScoreDouble = Double.parseDouble(pdhCvParam.getValue());
-//                        pdhScore = "<td>" + String.format("%.2f", pdhScoreDouble) + "</td>";
-//                    }
-//                }
-//                                            
-//                // Get the DBSequence ID from the PDH and then look up the DBSequence from the hashmap    
-//                // Get the sequence of each PDH from the DbSequence HashMap
-//                DBSequence proteinDbSeq = proteinDbSequenceIdHashMap.get(pdhList.get(pdhNum).getDBSequenceRef());
-//                
-//                // Get the list of CvParam which are associated with DBSequence
-//                // <xsd:group ref="ParamGroup" minOccurs="0" maxOccurs="unbounded">
-//                // <xsd:documentation> Additional descriptors for the sequence, such as taxon, description line etc
-//                List<CvParam> DbSeqCvParamList = proteinDbSeq.getCvParam();
-//                
-//                // Iterate through the list of DBSeq CV Param (includes protein sequence)
-//                for (int DbSeqCvParamNum = 0; DbSeqCvParamNum < DbSeqCvParamList.size(); DbSeqCvParamNum++) {                   
-//                    
-//                    // Get an individual DbSeq CV Param from the list
-//                    CvParam DbSeqCvParam = DbSeqCvParamList.get(DbSeqCvParamNum);
-//                    
-//                    // The protein name is the value of the CV Param with the associated name = "protein description"
-//                    if (DbSeqCvParam.getName().equals("protein description")) {                      
-//                        String proteinNameFull = DbSeqCvParam.getValue(); 
-//                    
-//                        // Regex to extract the accession code, species name and protein name
-//                        Pattern patternAcc = Pattern.compile("tr\\|(.*?)\\|");
-//                        Matcher matcherAcc = patternAcc.matcher(proteinNameFull);
-//                    
-//                        Pattern patternSpe = Pattern.compile("OS=(.*?)GN");
-//                        Matcher matcherSpe = patternSpe.matcher(proteinNameFull);
-//                    
-//                        Pattern patternName = Pattern.compile("\\s(.*?)OS=");
-//                        Matcher matcherName = patternName.matcher(proteinNameFull);
-//                    
-//                        // Format with HTML tags <td> because these variables are to be added to protein view table
-//                        if (matcherAcc.find() && matcherSpe.find() && matcherName.find()) {
-//                            accessionCode = "<td>" + matcherAcc.group(1) + "</td>";                                             
-//                            speciesName = "<td>" + matcherSpe.group(1) + "</td>"; 
-//                            proteinName = "<td>" + matcherName.group(1) + "</td>";                         
-//                        }  
-//                    }
-//                
-//                proteinInfoBuilder.append("<tr>");
-//                proteinInfoBuilder.append(accessionCode);
-//                proteinInfoBuilder.append(speciesName);
-//                proteinInfoBuilder.append(proteinName);
-//                proteinInfoBuilder.append(pdhScore);
-//                proteinInfoBuilder.append(obsObs);
-//                proteinInfoBuilder.append("</tr>");
-//                    
-//                }                                        
-//            }                    
-//        }
-//        
-//        List <String> proteinInfoReturn = new ArrayList();        
-//        proteinInfoReturn.add(proteinInfoBuilder.toString());
-//        proteinInfoReturn.add(pdhScoreType);
-//        
-//        return proteinInfoReturn;
-//    }                        
-//}
-

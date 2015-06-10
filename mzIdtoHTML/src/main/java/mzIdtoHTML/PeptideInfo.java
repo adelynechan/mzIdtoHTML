@@ -87,11 +87,15 @@ public class PeptideInfo {
         
         MzidData mzidDataPeptide = new MzidData();     
         PeptideInfo peptideInfo = new PeptideInfo();
+        Metadata metadataPeptide = new Metadata();
+        
         
         // Get the hashmaps required for accessing information for each SpectrumIdentificationItem       
         HashMap<String, Peptide> peptideIdHashMap = mzidDataPeptide.getPeptideIdHashmap();
         HashMap<String, DBSequence> dbSequenceIdHashMap = mzidDataPeptide.getDbSequenceIdHashMap();
-        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = mzidDataPeptide.getPeptideEvidenceIdHashMap().get(0);
+        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = mzidDataPeptide.getPeptideEvidenceIdHashMap().get(0);      
+        HashMap <String, String> softwareScoreHashMap = peptideInfo.getSoftwareScoreHashMap();
+        
         
         // Sorted map for arranging by score
         // Keys are the first element of score
@@ -114,7 +118,19 @@ public class PeptideInfo {
             
             for (int siiNum = 0; siiNum < spectrumIdentItemList.size(); siiNum ++) {
                 SpectrumIdentificationItem spectrumIdentItem = spectrumIdentItemList.get(siiNum);
-                scoreName = spectrumIdentItem.getCvParam().get(0).getName();
+                
+                int cvParamNum = 0;
+                String analysisSoftware = metadataPeptide.getSoftwareName();
+                ArrayList <String> softwareList = new ArrayList <String>(softwareScoreHashMap.keySet());
+               
+                if (softwareList.contains(analysisSoftware)) {
+                    String scoreNameLookup = softwareScoreHashMap.get(analysisSoftware);
+                    String softwareNameCvParam = spectrumIdentItem.getCvParam().get(cvParamNum).getName();
+                    while (!softwareNameCvParam.equals(scoreNameLookup)) {
+                        cvParamNum = cvParamNum + 1;
+                    }
+                }
+                scoreName = spectrumIdentItem.getCvParam().get(cvParamNum).getName();
 
                 // PSM ID
                 String spectrumIdItem = spectrumIdentItem.getId();

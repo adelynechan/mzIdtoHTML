@@ -8,6 +8,8 @@ package mzIdtoHTML;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
@@ -217,7 +219,9 @@ public class MzidToHTML {
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);
+
+        }
     }
-}
+
         
 

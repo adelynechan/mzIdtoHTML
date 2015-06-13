@@ -8,19 +8,23 @@ package mzIdtoHTML;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.List;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
 import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
 import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 
 /**
  *
  * @author Adelyne
  */
 public class MzidData {
+
     
     // Hashmap with peptide ID as key and Peptide as value
-    public HashMap <String, Peptide> getPeptideIdHashmap () {
+    public HashMap <String, Peptide> getPeptideIdHashMap () {
         HashMap<String, Peptide> peptideIdHashMap = new HashMap();
         Iterator<Peptide> iterPeptide = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.Peptide);
         while (iterPeptide.hasNext()) {
@@ -41,30 +45,34 @@ public class MzidData {
         }
         return dbSequenceIdHashMap;
     }
-    //Jun: I would check the decoy status here as well, probably generate a decoy list containing ids for decoys
-    //then you do not need to iterate again to find out decoys.
     
-    public ArrayList <HashMap> getPeptideEvidenceIdHashMap() {
-        HashMap <String, PeptideEvidence> peptideEvidenceIdHashMap = new HashMap();
-        HashMap <String, PeptideEvidence> peptideEvidenceDecoyHashMap = new HashMap();
+    public HashMap <ProteinDetectionHypothesis, List<String>> getPdhPeptideSeqHashMap() {
+        MzidData mzidData = new MzidData();
+        PeptideEvidenceData peptideEvidenceMzidData = new PeptideEvidenceData();
         
-        Iterator<PeptideEvidence> iterPeptideEvidence = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.PeptideEvidence);
-            while (iterPeptideEvidence.hasNext()) {
-                PeptideEvidence peptideEvidence = iterPeptideEvidence.next();
-                
-                // Add the peptide ID and peptideEvidence into the hashmap
-                peptideEvidenceIdHashMap.put(peptideEvidence.getId(), peptideEvidence);
-                
-                // Add the peptide ID to the arraylist if isDecoy = true
-                if (peptideEvidence.isIsDecoy()) {
-                    peptideEvidenceDecoyHashMap.put(peptideEvidence.getId(), peptideEvidence);
-                }
+        HashMap <String, PeptideEvidence> peptideEvidenceIdHashMap = peptideEvidenceMzidData.getPeptideEvidenceIdHashMap();
+        HashMap <String, Peptide> peptideIdHashMap = mzidData.getPeptideIdHashMap();
+        
+        HashMap <ProteinDetectionHypothesis, List<String>> pdhPeptideSeqHashMap = new HashMap();
+        
+        // Unmarshal the ProteinDetectionHypothesis class and create an iterator to go through all entries
+        Iterator <ProteinDetectionHypothesis> iterPDH = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
+                (MzIdentMLElement.ProteinDetectionHypothesis);
+        
+        // Get a list of all PeptideHypothesis which are associated with the ProteinDetectionHypothesis
+        // Loop over all ProteinDetectionHypothesis entries using the iterator
+        while (iterPDH.hasNext()) {
+            ProteinDetectionHypothesis pdh = iterPDH.next();
+            
+            List <PeptideHypothesis> peptideHypothesisList = pdh.getPeptideHypothesis();
+            List <String> peptideEvidenceList = new ArrayList();
+            for (int pepHypNum = 0; pepHypNum < peptideHypothesisList.size(); pepHypNum++) {
+                PeptideHypothesis peptideHypothesis = peptideHypothesisList.get(pepHypNum);
+                PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideHypothesis.getPeptideEvidenceRef());
+                peptideEvidenceList.add((peptideIdHashMap.get(peptideEvidence.getPeptideRef())).getPeptideSequence());
             }
-       
-        ArrayList <HashMap> returnPeptideEvidence = new ArrayList();
-        returnPeptideEvidence.add(peptideEvidenceIdHashMap);
-        returnPeptideEvidence.add(peptideEvidenceDecoyHashMap);
-        
-        return returnPeptideEvidence;
-    }  
+            pdhPeptideSeqHashMap.put(pdh, peptideEvidenceList);
+        }      
+        return pdhPeptideSeqHashMap;
+    }
 }

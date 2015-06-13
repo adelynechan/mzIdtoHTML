@@ -5,6 +5,8 @@
  */
 package mzIdtoHTML;
 
+import uk.ac.ebi.jmzidml.MzIdentMLElement;
+
 /**
  *
  * @author Adelyne
@@ -12,9 +14,10 @@ package mzIdtoHTML;
 public class GlobalStatistics {
         
     MzidData mzidDataStats = new MzidData();
+    PeptideEvidenceData peptideEvidenceStats = new PeptideEvidenceData();
     
     int getPeptideNumber() {           
-        return mzidDataStats.getPeptideIdHashmap().size();   
+        return mzidDataStats.getPeptideIdHashMap().size();   
     }
     
     Double getDecoyPercentage() {     
@@ -26,7 +29,7 @@ public class GlobalStatistics {
         // Get number of decoy peptide matches
         // mzidDataStats.getPeptideEvidenceIdHashMap returns an arraylist of 2 hashmaps
         // The second hashmap in the arraylist is the decoy entries in the input file
-        int decoyNumber =  mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();   
+        int decoyNumber =  peptideEvidenceStats.getPeptideEvidenceIdHashMap().size();
         
         // Calculate decoy percentage and return
         return (double)(decoyNumber) / (double)(peptideNumber) * 100;
@@ -35,7 +38,11 @@ public class GlobalStatistics {
     Double getGlobalFDR() {
         GlobalStatistics globalStatistics = new GlobalStatistics();
         int peptideNumber = globalStatistics.getPeptideNumber();
-        int decoyNumber = mzidDataStats.getPeptideEvidenceIdHashMap().get(1).size();      
+        int decoyNumber = peptideEvidenceStats.getPeptideEvidenceDecoyIdList().size();      
         return 100 * (2 * (double)(decoyNumber)) / (double)(peptideNumber);     
+    }
+    
+    int getProteinNumber() {
+        return mzidDataStats.getDbSequenceIdHashMap().size();     
     }
 }

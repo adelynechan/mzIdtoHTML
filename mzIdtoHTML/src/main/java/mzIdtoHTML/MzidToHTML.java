@@ -7,10 +7,15 @@ package mzIdtoHTML;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Set;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
+import java.util.SortedMap;
+import java.util.HashMap;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
@@ -40,18 +45,18 @@ public class MzidToHTML {
         StringBuilder headerBuilder = new StringBuilder();
         
         headerBuilder.append("<html>");
-        headerBuilder.append("<head>");
-        //headerBuilder.append("<link rel='stylesheet' type='text/css' href='stylesheet.css'>");
-        headerBuilder.append("<link rel=\"stylesheet\" "
-            + "href=\"stylesheet.css\">");
+        headerBuilder.append("\n<head>");
+        headerBuilder.append("\n<link rel=\"stylesheet\" href=\"stylesheet.css\">");
+      
+   
             //+ "<script src=\"http://code.jquery.com/jquery-latest.min.js\" type=\"text/javascript\"></script>"
-        headerBuilder.append("<script src=\"sorttable.js\" type=\"text/javascript\"></script>");
-        
-        headerBuilder.append("<title>mzIdtoHTML</title>");
-        headerBuilder.append("<h1> mzIdentML to HTML for ");
+        //headerBuilder.append("<script src=\"sorttable.js\" type=\"text/javascript\"></script>");
+
+        headerBuilder.append("\n<title>mzIdtoHTML</title>");
+        headerBuilder.append("\n<h1> mzIdentML to HTML for ");
         headerBuilder.append(input);
-        headerBuilder.append("</h1>");
-        headerBuilder.append("</head>");  
+        headerBuilder.append("\n</h1>");
+        headerBuilder.append("\n</head>");  
         
         return headerBuilder.toString();
     }
@@ -67,35 +72,36 @@ public class MzidToHTML {
         // Converted to string and returned as method output
         StringBuilder metadataBuilder = new StringBuilder(); 
         
-        ////metadataBuilder.append("<div data-role=\"collapsible\" data-collapsed = \"true\">");
-        metadataBuilder.append("<h2> Metadata </h2>");
+
+        
+        //metadataBuilder.append("\n<h2> Metadata </h2>");
         
         // Search Type: Can only have one result per mzIdentML file
-        metadataBuilder.append("<p>");
+        metadataBuilder.append("\n<p>");
         metadataBuilder.append("Search Type: ");
         metadataBuilder.append(metadata.getSearchType());
         metadataBuilder.append("</p>");
         
         // Software Name(s)
-        metadataBuilder.append("<p>");
-        metadataBuilder.append("Software Name: ");
+        metadataBuilder.append("\n<p>");
+        metadataBuilder.append("List of Software Used: ");
         metadataBuilder.append(metadata.getSoftwareName());
         metadataBuilder.append("</p>");
         
         // Enzyme(s) Used
-        metadataBuilder.append("<p>");
+        metadataBuilder.append("\n<p>");
         metadataBuilder.append("Enzymes Used: ");
         metadataBuilder.append(metadata.getEnzymesUsed());
         metadataBuilder.append("</p>");
         
         // Fixed modification(s) searched
-        metadataBuilder.append("<p>");
+        metadataBuilder.append("\n<p>");
         metadataBuilder.append("Fixed Modifications: ");
         metadataBuilder.append(metadata.getFixedModifications());
         metadataBuilder.append("</p>");
         
         // Variable modification(s) searched
-        metadataBuilder.append("<p>");
+        metadataBuilder.append("\n<p>");
         metadataBuilder.append("Variable Modifications: ");
         metadataBuilder.append(metadata.getVariableModifications());
         metadataBuilder.append("</p>");
@@ -116,20 +122,24 @@ public class MzidToHTML {
         StringBuilder statisticsBuilder = new StringBuilder();
         
         // Creates the header for this item
-        statisticsBuilder.append("<h2> Global Statistics </h2>");
+        statisticsBuilder.append("\n<h2> Global Statistics </h2>");
         
         int peptideNumber = globalStatisticsMain.getPeptideNumber();
         Double decoyPercentage = globalStatisticsMain.getDecoyPercentage();
         Double globalFDR = globalStatisticsMain.getGlobalFDR();
+        int proteinNumber = globalStatisticsMain.getProteinNumber();
         
-        statisticsBuilder.append("<p> Peptide Number: ");
+        statisticsBuilder.append("\n<p> Peptide Number: ");
         statisticsBuilder.append(Integer.toString(peptideNumber));
         statisticsBuilder.append("</p>");
-        statisticsBuilder.append("<p> Decoy Percentage: " );
+        statisticsBuilder.append("\n<p> Decoy Percentage: " );
         statisticsBuilder.append(String.format("%.2f", decoyPercentage));
         statisticsBuilder.append("</p>");
-        statisticsBuilder.append("<p> Global FDR: ");
+        statisticsBuilder.append("\n<p> Global FDR: ");
         statisticsBuilder.append(String.format("%.2f ", globalFDR));
+        statisticsBuilder.append("</p>");
+        statisticsBuilder.append("\n<p> Protein Number: ");
+        statisticsBuilder.append(Integer.toString(proteinNumber));
         statisticsBuilder.append("</p>");
         
         // Convert stringbuilder to a string and return
@@ -149,21 +159,21 @@ public class MzidToHTML {
         List<String> peptideView = peptideInfoMain.getPeptideInfo(); // Method returns a list with 2 elements
         
         // Create the main header "Peptide View"
-        peptideInfoMainBuilder.append("<h2> Peptide View </h2>");
+        peptideInfoMainBuilder.append("\n<h2> Peptide View </h2>");
         
         // Specify features of table - sortable (takes time!), table width
-        //peptideInfoMainBuilder.append("<html><head><script src=\"sorttable.js\" type=\"text/javascript\"></script></head>");
-        peptideInfoMainBuilder.append("<table><table class = \"sortable\" table style = \"width = 100%\"");
+        // for sortable plugin //peptideInfoMainBuilder.append("<table><table class = \"sortable\" table style = \"width = 100%\"");
+        peptideInfoMainBuilder.append("\n<table><table style = \"width = 100%\"");
         
         // Create the header row of the table
-        peptideInfoMainBuilder.append("<tr><th>PSM ID</th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
+        peptideInfoMainBuilder.append("<tr>\n<th>PSM ID</th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
                 + "\n<th>Exp m/z</th> \n<th>Charge</th> \n<th>Modifications</th> \n<th>Score: ");
         peptideInfoMainBuilder.append(peptideView.get(1)); // Get type of score and include in header
-        peptideInfoMainBuilder.append("</th> <th>Associated Proteins</th> </tr>");
+        peptideInfoMainBuilder.append("</th> \n<th>Associated Proteins</th> \n</tr>");
         
         // Extract table contents (1 string from the peptideView list) and append
         peptideInfoMainBuilder.append(peptideView.get(0));
-        peptideInfoMainBuilder.append("</table>");
+        peptideInfoMainBuilder.append("\n</table>");
         
         return peptideInfoMainBuilder.toString();
     }
@@ -177,11 +187,11 @@ public class MzidToHTML {
         
            
         if (pdl != null) {           
-            proteinInfoMainBuilder.append("<h2> Protein View </h2>");
-            proteinInfoMainBuilder.append("<table> <table style = 'width:100%'>\n\t<tr>");
-            proteinInfoMainBuilder.append("<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
+            proteinInfoMainBuilder.append("\n<h2> Protein View </h2>");
+            proteinInfoMainBuilder.append("\n<table> <table style = 'width:100%'>\n\t<tr>");
+            proteinInfoMainBuilder.append("\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
             proteinInfoMainBuilder.append(proteinView.get(1));
-            proteinInfoMainBuilder.append("</th> \n<th>Observed/Observable</th></tr>");
+            proteinInfoMainBuilder.append("</th> \n<th>Detected Peptide Coverage</th>\n</tr>");
             proteinInfoMainBuilder.append(proteinView.get(0));
         }
         
@@ -214,12 +224,21 @@ public class MzidToHTML {
 
     public static void main(String[] args) {
         String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
-        //String input = "Galaxy12MSGFHuman.mzid"; // Full dataset test file - currently takes very long to run
+        //String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);
-
+        //converter.convert(input, output);
+        
+        
+        MzidData mzidDataTest = new MzidData();
+        
+        ProteinInfo proteinInfoTest = new ProteinInfo();
+        HashMap<ProteinDetectionHypothesis, List<String>> pdhPeptideSeqHashMap = mzidDataTest.getPdhPeptideSeqHashMap();
+        //ArrayList <ProteinDetectionHypothesis> pdhKeySet = new ArrayList(pdhPeptideSeqHashMap.keySet());
+        //ProteinDetectionHypothesis pdhTest = pdhKeySet.get(0);      
+        System.out.println(proteinInfoTest.getPeptideCoverage());
+        System.out.println(pdhPeptideSeqHashMap);
         }
     }
 

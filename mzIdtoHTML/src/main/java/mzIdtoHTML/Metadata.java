@@ -7,6 +7,7 @@ package mzIdtoHTML;
 
 
 import java.util.Iterator;
+import java.util.ArrayList;
 import uk.ac.ebi.jmzidml.model.mzidml.*;
 
 import java.util.List;
@@ -38,7 +39,8 @@ public class Metadata {
     // <xsd:documentation> The software packages used to perform the analyses  
     String getSoftwareName() {
         
-        StringBuilder softwareNameBuilder = new StringBuilder();
+        String softwareNameBuilder = new String();
+        ArrayList <String> softwareNameList = new ArrayList();
         
         Iterator <AnalysisSoftware> iterAS = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath(MzIdentMLElement.AnalysisSoftware);
         while (iterAS.hasNext()) {
@@ -46,14 +48,17 @@ public class Metadata {
             Param softwareType = as.getSoftwareName();
             
             if (softwareType == null) {
-                softwareNameBuilder.append("Information not available");
+                softwareNameList.add("Information not available");
             }
             
             else {
-                softwareNameBuilder.append(as.getSoftwareName().getCvParam().getName());
+                softwareNameList.add(as.getSoftwareName().getCvParam().getName());
             }
         } 
-        return softwareNameBuilder.toString();
+        
+        softwareNameBuilder = String.join(", ", softwareNameList);
+        
+        return softwareNameBuilder;
     }
 
     // Enzyme(s) (if empty return "Information not available")

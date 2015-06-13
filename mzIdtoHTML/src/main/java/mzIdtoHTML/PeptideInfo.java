@@ -88,12 +88,13 @@ public class PeptideInfo {
         MzidData mzidDataPeptide = new MzidData();     
         PeptideInfo peptideInfo = new PeptideInfo();
         Metadata metadataPeptide = new Metadata();
+        PeptideEvidenceData peptideEvidencePeptide = new PeptideEvidenceData();
         
         
         // Get the hashmaps required for accessing information for each SpectrumIdentificationItem       
-        HashMap<String, Peptide> peptideIdHashMap = mzidDataPeptide.getPeptideIdHashmap();
+        HashMap<String, Peptide> peptideIdHashMap = mzidDataPeptide.getPeptideIdHashMap();
         HashMap<String, DBSequence> dbSequenceIdHashMap = mzidDataPeptide.getDbSequenceIdHashMap();
-        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = mzidDataPeptide.getPeptideEvidenceIdHashMap().get(0);      
+        HashMap<String, PeptideEvidence> peptideEvidenceIdHashMap = peptideEvidencePeptide.getPeptideEvidenceIdHashMap();      
         HashMap <String, String> softwareScoreHashMap = peptideInfo.getSoftwareScoreHashMap();
         
         

@@ -18,6 +18,9 @@ import uk.ac.ebi.jmzidml.model.mzidml.AnalysisData;
 import uk.ac.ebi.jmzidml.model.mzidml.CvParam;
 import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
 import uk.ac.ebi.jmzidml.model.mzidml.DataCollection;
+import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 
@@ -37,9 +40,6 @@ public class ProteinInfo {
     
     public SortedMap <Double, ArrayList<ProteinDetectionHypothesis>> getScorePdhSortedMap() {
         SortedMap <Double, ArrayList <ProteinDetectionHypothesis>> scorePdhSortedMap = new TreeMap();
-         
-        ProteinInfo proteinInfo = new ProteinInfo();
-        ProteinDetectionList pdl = proteinInfo.getProteinDetectionList();
         
         Iterator <ProteinDetectionHypothesis> iterPDH = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
                 (MzIdentMLElement.ProteinDetectionHypothesis);
@@ -72,7 +72,31 @@ public class ProteinInfo {
         return scorePdhSortedMap;
     }
                            
-
+    public HashMap <ProteinDetectionHypothesis, List<String>> getPeptideCoverage() {
+        
+        MzidData mzidDataProtein = new MzidData();
+        HashMap<ProteinDetectionHypothesis, List<String>> pdhPeptideSeqProteinHashMap = mzidDataProtein.getPdhPeptideSeqHashMap();
+        return pdhPeptideSeqProteinHashMap;
+       
+        //HashMap <String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
+    
+        
+        // Total length of the protein
+        //int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
+        
+        // To calculate the total length of peptides within the protein that have been detected
+        //Double totalPeptideLength = 0.0;
+        
+        //List <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
+        //return peptideSeqList;
+//        totalPeptideLength = totalPeptideLength + peptideSeqList.get(0).length();
+//        
+//        for (int pepSeqNum = 0; pepSeqNum < peptideSeqList.size(); pepSeqNum++) {
+//            String sequence = peptideSeqList.get(pepSeqNum);
+//            totalPeptideLength = totalPeptideLength + sequence.length();
+//        }                       
+//        return (totalPeptideLength / proteinLength) * 100;
+    }
    
     List <String> getProteinInfo() {
         ProteinInfo proteinInfo = new ProteinInfo();
@@ -89,7 +113,7 @@ public class ProteinInfo {
         
         for (int scorePdhNum = scoresPdh.size()-1; scorePdhNum >= 0; scorePdhNum--) {
             ArrayList <ProteinDetectionHypothesis> pdhList = scorePdhSortedMap.get(scoresPdh.get(scorePdhNum));
-            if (pdhList.size() != 0) {
+            if (!pdhList.isEmpty()) {
             
                 for (int pdhNum = 0; pdhNum < pdhList.size(); pdhNum ++) {
                     ProteinDetectionHypothesis pdh = pdhList.get(pdhNum);
@@ -99,7 +123,9 @@ public class ProteinInfo {
                     String speciesName = new String();
                     String proteinName = "<td> Not Available </td>"; // Cv param with full name is not always available
                     String pdhScore = new String();
-                    String obsObs = new String();           
+                    
+                    int peptideCoverage = proteinInfo.getPeptideCoverage(pdh);
+                    String peptideCoverageString = String.valueOf(peptideCoverage);
                 
                     // Get the DBSequence ID from the PDH and then look up the DBSequence from the hashmap    
                     // Get the sequence of each PDH from the DbSequence HashMap
@@ -174,23 +200,16 @@ public class ProteinInfo {
                             // A PDHScore is created for each PDH by summing the PSM scores according to the user parameters (Ghali 2013)
                             pdhScoreType = pdhCvParam.getName();
                             Double pdhScoreDouble = Double.parseDouble(pdhCvParam.getValue());
-                            pdhScore = "<td>" + String.format("%.2f", pdhScoreDouble) + "</td>";
+                            pdhScore = "<td> <div style = \"text-align:center\">" + String.format("%.2f", pdhScoreDouble) + "</td>";
                         }           
-                        
-                        // id: MS:1001097
-                        // name: distinct peptide sequences
-                        // This counts distinct sequences hitting the protein without regard to a minimal confidence threshold
-                        if (pdhCvParam.getAccession().equals("MS:1001097")) {
-                            Double peptidesObserved = Double.parseDouble(pdhCvParam.getValue());
-                        }
                     }                  
                     
-                    proteinInfoBuilder.append("<tr>");
+                    proteinInfoBuilder.append("\n<tr>");
                     proteinInfoBuilder.append(accessionCode);
                     proteinInfoBuilder.append(speciesName);
                     proteinInfoBuilder.append(proteinName);
                     proteinInfoBuilder.append(pdhScore);
-                    proteinInfoBuilder.append(obsObs);
+                    proteinInfoBuilder.append(peptideCoverageString);
                     proteinInfoBuilder.append("</tr>");                      
                 }
             }

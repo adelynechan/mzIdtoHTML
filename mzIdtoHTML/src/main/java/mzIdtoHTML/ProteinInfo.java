@@ -72,10 +72,10 @@ public class ProteinInfo {
         return scorePdhSortedMap;
     }
                            
-    public HashMap <ProteinDetectionHypothesis, List<String>> getPeptideCoverage() {
+    public HashMap <ProteinDetectionHypothesis, ArrayList<String>> getPeptideCoverage() {
         
         MzidData mzidDataProtein = new MzidData();
-        HashMap<ProteinDetectionHypothesis, List<String>> pdhPeptideSeqProteinHashMap = mzidDataProtein.getPdhPeptideSeqHashMap();
+        HashMap<ProteinDetectionHypothesis, ArrayList<String>> pdhPeptideSeqProteinHashMap = mzidDataProtein.getPdhPeptideSeqHashMap();
         return pdhPeptideSeqProteinHashMap;
        
         //HashMap <String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
@@ -124,8 +124,8 @@ public class ProteinInfo {
                     String proteinName = "<td> Not Available </td>"; // Cv param with full name is not always available
                     String pdhScore = new String();
                     
-                    int peptideCoverage = proteinInfo.getPeptideCoverage(pdh);
-                    String peptideCoverageString = String.valueOf(peptideCoverage);
+                    ////////int peptideCoverage = proteinInfo.getPeptideCoverage(pdh);
+                    ////////String peptideCoverageString = String.valueOf(peptideCoverage);
                 
                     // Get the DBSequence ID from the PDH and then look up the DBSequence from the hashmap    
                     // Get the sequence of each PDH from the DbSequence HashMap
@@ -209,7 +209,7 @@ public class ProteinInfo {
                     proteinInfoBuilder.append(speciesName);
                     proteinInfoBuilder.append(proteinName);
                     proteinInfoBuilder.append(pdhScore);
-                    proteinInfoBuilder.append(peptideCoverageString);
+                    proteinInfoBuilder.append(" "); // for the peptide coverage
                     proteinInfoBuilder.append("</tr>");                      
                 }
             }

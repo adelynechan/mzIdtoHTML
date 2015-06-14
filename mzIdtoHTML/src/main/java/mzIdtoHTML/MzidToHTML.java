@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.HashMap;
+import java.util.Iterator;
+import uk.ac.ebi.jmzidml.MzIdentMLElement;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
 import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
@@ -47,6 +49,11 @@ public class MzidToHTML {
         headerBuilder.append("<html>");
         headerBuilder.append("\n<head>");
         headerBuilder.append("\n<link rel=\"stylesheet\" href=\"stylesheet.css\">");
+        
+        // Include the source for Jquery (downloaded, if need be change to hosted link here)
+        headerBuilder.append("\n<script src=\"jquery-1.11.3.min.js\"></script>");
+        // Include the source for Jquery functions written for this project
+        headerBuilder.append("<script src=\"mzidJqueryFunctions.js\"></script>");
       
    
             //+ "<script src=\"http://code.jquery.com/jquery-latest.min.js\" type=\"text/javascript\"></script>"
@@ -71,10 +78,8 @@ public class MzidToHTML {
         // New stringbuilder to which metadata elements and HTML tags can be appended
         // Converted to string and returned as method output
         StringBuilder metadataBuilder = new StringBuilder(); 
-        
-
-        
-        //metadataBuilder.append("\n<h2> Metadata </h2>");
+             
+        metadataBuilder.append("\n<h2> Metadata </h2>");
         
         // Search Type: Can only have one result per mzIdentML file
         metadataBuilder.append("\n<p>");
@@ -105,8 +110,6 @@ public class MzidToHTML {
         metadataBuilder.append("Variable Modifications: ");
         metadataBuilder.append(metadata.getVariableModifications());
         metadataBuilder.append("</p>");
-        
-        ////metadataBuilder.append("</div>");
         
         // Convert stringbuilder to a string and return
         return metadataBuilder.toString();
@@ -211,7 +214,7 @@ public class MzidToHTML {
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
-            //fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
+            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
             fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             
             fileWriter.close();
@@ -228,19 +231,10 @@ public class MzidToHTML {
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        //converter.convert(input, output);
-        
-        
-        MzidData mzidDataTest = new MzidData();
-        
-        ProteinInfo proteinInfoTest = new ProteinInfo();
-        HashMap<ProteinDetectionHypothesis, List<String>> pdhPeptideSeqHashMap = mzidDataTest.getPdhPeptideSeqHashMap();
-        //ArrayList <ProteinDetectionHypothesis> pdhKeySet = new ArrayList(pdhPeptideSeqHashMap.keySet());
-        //ProteinDetectionHypothesis pdhTest = pdhKeySet.get(0);      
-        System.out.println(proteinInfoTest.getPeptideCoverage());
-        System.out.println(pdhPeptideSeqHashMap);
-        }
+        converter.convert(input, output);
+ 
     }
+}
 
         
 

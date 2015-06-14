@@ -46,14 +46,14 @@ public class MzidData {
         return dbSequenceIdHashMap;
     }
     
-    public HashMap <ProteinDetectionHypothesis, List<String>> getPdhPeptideSeqHashMap() {
+    public HashMap <ProteinDetectionHypothesis, ArrayList<String>> getPdhPeptideSeqHashMap() {
         MzidData mzidData = new MzidData();
         PeptideEvidenceData peptideEvidenceMzidData = new PeptideEvidenceData();
         
         HashMap <String, PeptideEvidence> peptideEvidenceIdHashMap = peptideEvidenceMzidData.getPeptideEvidenceIdHashMap();
         HashMap <String, Peptide> peptideIdHashMap = mzidData.getPeptideIdHashMap();
         
-        HashMap <ProteinDetectionHypothesis, List<String>> pdhPeptideSeqHashMap = new HashMap();
+        HashMap <ProteinDetectionHypothesis, ArrayList<String>> pdhPeptideSeqHashMap = new HashMap();
         
         // Unmarshal the ProteinDetectionHypothesis class and create an iterator to go through all entries
         Iterator <ProteinDetectionHypothesis> iterPDH = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
@@ -64,13 +64,20 @@ public class MzidData {
         while (iterPDH.hasNext()) {
             ProteinDetectionHypothesis pdh = iterPDH.next();
             
+            // Get a list of PeptideHypothesis associated with the ProteinDetectionHypothesis
             List <PeptideHypothesis> peptideHypothesisList = pdh.getPeptideHypothesis();
-            List <String> peptideEvidenceList = new ArrayList();
+            
+            // Initialise a new ArrayList to store the peptide sequences associated with each pdh
+            ArrayList <String> peptideEvidenceList = new ArrayList();
+            
+            // For each PeptideHypothesis, retrieve the peptide sequence and store in list 
             for (int pepHypNum = 0; pepHypNum < peptideHypothesisList.size(); pepHypNum++) {
                 PeptideHypothesis peptideHypothesis = peptideHypothesisList.get(pepHypNum);
                 PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideHypothesis.getPeptideEvidenceRef());
                 peptideEvidenceList.add((peptideIdHashMap.get(peptideEvidence.getPeptideRef())).getPeptideSequence());
             }
+            
+            // Add to the HashMap with the ProteinDetectionHypothesis as key and list of peptide sequences as value
             pdhPeptideSeqHashMap.put(pdh, peptideEvidenceList);
         }      
         return pdhPeptideSeqHashMap;

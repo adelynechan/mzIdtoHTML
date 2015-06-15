@@ -68,7 +68,6 @@ public class ProteinPeptideData {
             // Get peptide sequences for pdh-sequence HashMap   
             // Initialise a new ArrayList to store the peptide sequences associated with each pdh
             ArrayList <String> peptideSeqList = new ArrayList();
-            peptideSeqList.add("test");
             
             // For each PeptideHypothesis, retrieve the peptide sequence and store in list 
             for (int pepHypNum = 0; pepHypNum < peptideHypothesisList.size(); pepHypNum++) {

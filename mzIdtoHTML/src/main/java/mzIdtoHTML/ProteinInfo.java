@@ -32,35 +32,41 @@ public class ProteinInfo {
         return pdl;
     }
     
-    Double getPeptideCoverage(ProteinDetectionHypothesis pdh) {
+    ArrayList <String> getPeptideCoverage(ProteinDetectionHypothesis pdh) {
         ProteinPeptideData ppdProtein = new ProteinPeptideData();
         MzidData mzidDataProtein = new MzidData();
         
+        SortedMap <Double, ArrayList <ProteinDetectionHypothesis>> scorePdhSortedMap = ppdProtein.getScorePdhSortedMap();
         HashMap <ProteinDetectionHypothesis, ArrayList<String>> pdhPeptideSeqHashMap = ppdProtein.getPdhPeptideSeqHashMap();
         HashMap <String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
+        
+        return pdhPeptideSeqHashMap.get(pdh);
                 
         //Total length of the protein
-        int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
+//        int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
+//        
+//        Double totalPeptideLength = 0.0;
+//        ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
+//        
+//        return peptideSeqList;
         
-        Double totalPeptideLength = 0.0;
-        ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
+//        if (!peptideSeqList.isEmpty()) {
+//            for (int peptideSeqNum = 0; peptideSeqNum < peptideSeqList.size(); peptideSeqNum++) {
+//                String sequence = peptideSeqList.get(peptideSeqNum);
+//                totalPeptideLength = totalPeptideLength + sequence.length();
+//            }
+//        }
         
-        if (!peptideSeqList.isEmpty()) {
-            for (int peptideSeqNum = 0; peptideSeqNum < peptideSeqList.size(); peptideSeqNum++) {
-                String sequence = peptideSeqList.get(peptideSeqNum);
-                totalPeptideLength = totalPeptideLength + sequence.length();
-            }
-        }
-        return (totalPeptideLength / proteinLength) * 100;
+//        return (totalPeptideLength / proteinLength) * 100;
     }
    
     List <String> getProteinInfo() {
         ProteinInfo proteinInfo = new ProteinInfo();
         ProteinPeptideData ppdProtein = new ProteinPeptideData();
-        SortedMap <Double, ArrayList<ProteinDetectionHypothesis>> scorePdhSortedMap = ppdProtein.getScorePdhSortedMap();
-        
-        // Retrieve the HashMap which maps DBSequence IDs to DBSequence
         MzidData mzidDataProtein = new MzidData();
+
+        SortedMap <Double, ArrayList<ProteinDetectionHypothesis>> scorePdhSortedMap = ppdProtein.getScorePdhSortedMap();
+        HashMap <ProteinDetectionHypothesis, ArrayList<String>> pdhPeptideSeqHashMap = ppdProtein.getPdhPeptideSeqHashMap();
         HashMap<String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
         
         StringBuilder proteinInfoBuilder = new StringBuilder();
@@ -161,14 +167,28 @@ public class ProteinInfo {
                         }           
                     }                  
                     
-                    Double peptideCoverage = proteinInfo.getPeptideCoverage(pdh);
+                    int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
+                    Double totalPeptideLength = 0.0;
+                    
+                    ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
+                    if (peptideSeqList != null) {
+                        for (int pepSeqNum = 0; pepSeqNum < peptideSeqList.size(); pepSeqNum++) {
+                            String peptideSeq = peptideSeqList.get(pepSeqNum);
+                            int peptideLength = peptideSeq.length();
+                            totalPeptideLength = totalPeptideLength + peptideLength;
+                        }
+                    }
+                    
+                    Double totalPeptideCoverage = (totalPeptideLength / proteinLength) * 100;                   
+                    String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
+                            + String.format("%.2f", totalPeptideCoverage) + "</td>";
                     
                     proteinInfoBuilder.append("\n<tr>");
                     proteinInfoBuilder.append(accessionCode);
                     proteinInfoBuilder.append(speciesName);
                     proteinInfoBuilder.append(proteinName);
                     proteinInfoBuilder.append(pdhScore);
-                    proteinInfoBuilder.append(peptideCoverage); 
+                    proteinInfoBuilder.append(peptideCoverageString); 
                     proteinInfoBuilder.append("</tr>");                      
                 }
             }

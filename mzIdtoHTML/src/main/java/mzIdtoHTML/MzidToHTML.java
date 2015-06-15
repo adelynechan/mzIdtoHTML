@@ -231,7 +231,14 @@ public class MzidToHTML {
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);
+        //converter.convert(input, output);
+        
+        ProteinPeptideData ppdTest = new ProteinPeptideData();
+        PeptideEvidenceData pedTest = new PeptideEvidenceData();
+        MzidData mzidTest = new MzidData();
+        System.out.println(pedTest.getPeptideEvidenceIdHashMap());
+        System.out.println(mzidTest.getPeptideIdHashMap());
+        System.out.println(ppdTest.getPdhPeptideSeqHashMap());
  
     }
 }

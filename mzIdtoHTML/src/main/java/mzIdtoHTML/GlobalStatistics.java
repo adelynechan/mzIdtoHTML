@@ -5,7 +5,9 @@
  */
 package mzIdtoHTML;
 
+import java.util.HashMap;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
+import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
 
 /**
  *
@@ -29,17 +31,11 @@ public class GlobalStatistics {
         // Get number of decoy peptide matches
         // mzidDataStats.getPeptideEvidenceIdHashMap returns an arraylist of 2 hashmaps
         // The second hashmap in the arraylist is the decoy entries in the input file
-        int decoyNumber =  peptideEvidenceStats.getPeptideEvidenceIdHashMap().size();
+        HashMap <String, PeptideEvidence> peptideEvidenceIdHashMap = peptideEvidenceStats.getPeptideEvidenceIdHashMap();
+        int decoyNumber =  peptideEvidenceStats.getPeptideEvidenceDecoyIdList().size();
         
         // Calculate decoy percentage and return
         return (double)(decoyNumber) / (double)(peptideNumber) * 100;
-    }
-    
-    Double getGlobalFDR() {
-        GlobalStatistics globalStatistics = new GlobalStatistics();
-        int peptideNumber = globalStatistics.getPeptideNumber();
-        int decoyNumber = peptideEvidenceStats.getPeptideEvidenceDecoyIdList().size();      
-        return 100 * (2 * (double)(decoyNumber)) / (double)(peptideNumber);     
     }
     
     int getProteinNumber() {

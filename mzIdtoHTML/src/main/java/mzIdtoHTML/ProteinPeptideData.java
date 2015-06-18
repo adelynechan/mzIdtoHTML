@@ -74,10 +74,13 @@ public class ProteinPeptideData {
                 PeptideHypothesis peptideHypothesis = peptideHypothesisList.get(pepHypNum);
                 String peptideEvidenceRef = peptideHypothesis.getPeptideEvidenceRef();
                 PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideEvidenceRef); // K:PeptideEvidenceID (String), V: PeptideEvidence 
-                String peptideRef = peptideEvidence.getPeptideRef();
-                Peptide peptide = peptideIdHashMap.get(peptideRef); // K:PeptideRef (String), V:Peptide
-                String peptideSequence = peptide.getPeptideSequence();
-                peptideSeqList.add(peptideSequence);
+                
+                if (!peptideEvidence.isIsDecoy()) {
+                    String peptideRef = peptideEvidence.getPeptideRef();
+                    Peptide peptide = peptideIdHashMap.get(peptideRef); // K:PeptideRef (String), V:Peptide
+                    String peptideSequence = peptide.getPeptideSequence();
+                    peptideSeqList.add(peptideSequence);
+                }
             }
             
             // Add to the HashMap with the ProteinDetectionHypothesis as key and list of peptide sequences as value

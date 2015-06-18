@@ -7,17 +7,8 @@ package mzIdtoHTML;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Set;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import uk.ac.ebi.jmzidml.MzIdentMLElement;
-import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
-import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
-import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
@@ -60,8 +51,9 @@ public class MzidToHTML {
         //headerBuilder.append("<script src=\"sorttable.js\" type=\"text/javascript\"></script>");
 
         headerBuilder.append("\n<title>mzIdtoHTML</title>");
-        headerBuilder.append("\n<h1> mzIdentML to HTML for ");
+        headerBuilder.append("\n<h1> Converted From ");
         headerBuilder.append(input);
+        //headerBuilder.append("(Filename).mzid"); // for generic title
         headerBuilder.append("\n</h1>");
         headerBuilder.append("\n</head>");  
         
@@ -119,6 +111,7 @@ public class MzidToHTML {
         
         // New instance of object GlobalStatistics
         GlobalStatistics globalStatisticsMain = new GlobalStatistics();
+        ProteinInfo proteinInfoMain = new ProteinInfo();
         
         // New stringbuilder to which statistics elements and HTML tags can be appended
         // Converted to string and returned as method output
@@ -129,7 +122,6 @@ public class MzidToHTML {
         
         int peptideNumber = globalStatisticsMain.getPeptideNumber();
         Double decoyPercentage = globalStatisticsMain.getDecoyPercentage();
-        Double globalFDR = globalStatisticsMain.getGlobalFDR();
         int proteinNumber = globalStatisticsMain.getProteinNumber();
         
         statisticsBuilder.append("\n<p> Peptide Number: ");
@@ -138,11 +130,14 @@ public class MzidToHTML {
         statisticsBuilder.append("\n<p> Decoy Percentage: " );
         statisticsBuilder.append(String.format("%.2f", decoyPercentage));
         statisticsBuilder.append("</p>");
-        statisticsBuilder.append("\n<p> Global FDR: ");
-        statisticsBuilder.append(String.format("%.2f ", globalFDR));
-        statisticsBuilder.append("</p>");
         statisticsBuilder.append("\n<p> Protein Number: ");
         statisticsBuilder.append(Integer.toString(proteinNumber));
+        statisticsBuilder.append("</p>");
+        statisticsBuilder.append("\n<p> Minimum Number of Detected Peptides for a Protein: ");
+        statisticsBuilder.append(proteinInfoMain.getProteinInfo().get(2));
+        statisticsBuilder.append("</p>");
+        statisticsBuilder.append("\n<p> Maximum Number of Detected Peptides for a Protein: ");
+        statisticsBuilder.append(proteinInfoMain.getProteinInfo().get(3));
         statisticsBuilder.append("</p>");
         
         // Convert stringbuilder to a string and return

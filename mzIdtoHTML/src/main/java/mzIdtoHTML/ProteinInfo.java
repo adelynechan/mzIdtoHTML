@@ -31,34 +31,6 @@ public class ProteinInfo {
         
         return pdl;
     }
-    
-    ArrayList <String> getPeptideCoverage(ProteinDetectionHypothesis pdh) {
-        ProteinPeptideData ppdProtein = new ProteinPeptideData();
-        MzidData mzidDataProtein = new MzidData();
-        
-        SortedMap <Double, ArrayList <ProteinDetectionHypothesis>> scorePdhSortedMap = ppdProtein.getScorePdhSortedMap();
-        HashMap <ProteinDetectionHypothesis, ArrayList<String>> pdhPeptideSeqHashMap = ppdProtein.getPdhPeptideSeqHashMap();
-        HashMap <String, DBSequence> proteinDbSequenceIdHashMap = mzidDataProtein.getDbSequenceIdHashMap();
-        
-        return pdhPeptideSeqHashMap.get(pdh);
-                
-        //Total length of the protein
-//        int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
-//        
-//        Double totalPeptideLength = 0.0;
-//        ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
-//        
-//        return peptideSeqList;
-        
-//        if (!peptideSeqList.isEmpty()) {
-//            for (int peptideSeqNum = 0; peptideSeqNum < peptideSeqList.size(); peptideSeqNum++) {
-//                String sequence = peptideSeqList.get(peptideSeqNum);
-//                totalPeptideLength = totalPeptideLength + sequence.length();
-//            }
-//        }
-        
-//        return (totalPeptideLength / proteinLength) * 100;
-    }
    
     List <String> getProteinInfo() {
         ProteinInfo proteinInfo = new ProteinInfo();
@@ -71,7 +43,10 @@ public class ProteinInfo {
         
         StringBuilder proteinInfoBuilder = new StringBuilder();
         String pdhScoreType = new String();
+        int minPeptides = 1000;
+        int maxPeptides = 0;
         
+        // Start extracting information from each individual pdh
         ArrayList <Double> scoresPdh = new ArrayList<Double>(scorePdhSortedMap.keySet());
         
         for (int scorePdhNum = scoresPdh.size()-1; scorePdhNum >= 0; scorePdhNum--) {
@@ -86,19 +61,16 @@ public class ProteinInfo {
                     String speciesName = new String();
                     String proteinName = "<td> Not Available </td>"; // Cv param with full name is not always available
                     String pdhScore = new String();
-                    
-                    ////////int peptideCoverage = proteinInfo.getPeptideCoverage(pdh);
-                    ////////String peptideCoverageString = String.valueOf(peptideCoverage);
                 
                     // Get the DBSequence ID from the PDH and then look up the DBSequence from the hashmap    
                     // Get the sequence of each PDH from the DbSequence HashMap
                     DBSequence proteinDbSeq = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef());
                     String proteinDbAccession = proteinDbSeq.getAccession();
                     
-                    Pattern patternAcc = Pattern.compile("tr\\|(.*?)\\|");
+                    Pattern patternAcc = Pattern.compile("(.*?)\\|(.*?)\\|");
                     Matcher matcherAcc = patternAcc.matcher(proteinDbAccession);
                     if (matcherAcc.find()) {
-                        accessionCode = "<td>" + matcherAcc.group(1) + "</td>";
+                        accessionCode = "<td>" + matcherAcc.group(2) + "</td>";
                     }
                     
                     // The code for the species is extracted from the Db Accession 
@@ -183,12 +155,22 @@ public class ProteinInfo {
                     String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
                             + String.format("%.2f", totalPeptideCoverage) + "</td>";
                     
+                    // Get peptide number for the pdh
+                    int currentPdhPeptideCount = peptideSeqList.size();
+                    if (currentPdhPeptideCount > maxPeptides) {
+                        maxPeptides = currentPdhPeptideCount;
+                    }
+                    
+                    else if (currentPdhPeptideCount < minPeptides && currentPdhPeptideCount > 0) {
+                        minPeptides = currentPdhPeptideCount;
+                    }
+                    
                     proteinInfoBuilder.append("\n<tr>");
                     proteinInfoBuilder.append(accessionCode);
                     proteinInfoBuilder.append(speciesName);
                     proteinInfoBuilder.append(proteinName);
                     proteinInfoBuilder.append(pdhScore);
-                    proteinInfoBuilder.append(peptideCoverageString); 
+                    proteinInfoBuilder.append(peptideCoverageString); // for peptide coverage
                     proteinInfoBuilder.append("</tr>");                      
                 }
             }
@@ -197,6 +179,9 @@ public class ProteinInfo {
         List proteinInfoReturn = new ArrayList <String>();
         proteinInfoReturn.add(proteinInfoBuilder.toString());
         proteinInfoReturn.add(pdhScoreType);
+        proteinInfoReturn.add(Integer.toString(minPeptides));
+        proteinInfoReturn.add(Integer.toString(maxPeptides));
+        
         
         return proteinInfoReturn;
     }

@@ -52,7 +52,10 @@ public class Metadata {
             }
             
             else {
-                softwareNameList.add(as.getSoftwareName().getCvParam().getName());
+                String softwareName = as.getSoftwareName().getCvParam().getName();
+                if (!softwareNameList.contains(softwareName)) {
+                    softwareNameList.add(as.getSoftwareName().getCvParam().getName());
+                }          
             }
         } 
         

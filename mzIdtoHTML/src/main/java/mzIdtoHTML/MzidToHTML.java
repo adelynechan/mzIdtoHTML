@@ -8,6 +8,7 @@ package mzIdtoHTML;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.SortedMap;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
@@ -193,7 +194,6 @@ public class MzidToHTML {
             proteinInfoMainBuilder.append("\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
             proteinInfoMainBuilder.append(proteinView.get(1));
             proteinInfoMainBuilder.append("</th> \n<th>Detected Peptide Coverage (%)</th>\n</tr>");
-            proteinInfoMainBuilder.append("</th> \n<th>Number of Peptides Detected</th>\n</tr>");
             proteinInfoMainBuilder.append(proteinView.get(0));
         }
         
@@ -231,7 +231,6 @@ public class MzidToHTML {
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);
- 
     }
 }
 

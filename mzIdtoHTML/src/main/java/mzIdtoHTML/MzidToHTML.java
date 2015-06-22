@@ -193,7 +193,7 @@ public class MzidToHTML {
             proteinInfoMainBuilder.append("\n<table> <table style = 'width:100%'>\n\t<tr>");
             proteinInfoMainBuilder.append("\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
             proteinInfoMainBuilder.append(proteinView.get(1));
-            proteinInfoMainBuilder.append("</th> \n<th>Detected Peptide Coverage (%)</th>\n</tr>");
+            proteinInfoMainBuilder.append("</th> \n</tr>");
             proteinInfoMainBuilder.append(proteinView.get(0));
         }
         

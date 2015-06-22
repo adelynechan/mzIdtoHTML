@@ -125,29 +125,29 @@ public class ProteinData {
             }           
         }                  
                     
-        int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
-        Double totalPeptideLength = 0.0;
+//        int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
+//        Double totalPeptideLength = 0.0;
                     
-        ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
-        if (peptideSeqList != null) {
-            for (int pepSeqNum = 0; pepSeqNum < peptideSeqList.size(); pepSeqNum++) {
-                String peptideSeq = peptideSeqList.get(pepSeqNum);
-                int peptideLength = peptideSeq.length();
-                totalPeptideLength = totalPeptideLength + peptideLength;          
-            }
-        }
-        
-                    
-        Double totalPeptideCoverage = (totalPeptideLength / proteinLength) * 100;                   
-        String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
-            + String.format("%.2f", totalPeptideCoverage) + "</td>";       
+//        ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
+//        if (peptideSeqList != null) {
+//            for (int pepSeqNum = 0; pepSeqNum < peptideSeqList.size(); pepSeqNum++) {
+//                String peptideSeq = peptideSeqList.get(pepSeqNum);
+//                int peptideLength = peptideSeq.length();
+//                totalPeptideLength = totalPeptideLength + peptideLength;          
+//            }
+//        }
+//        
+//                    
+//        Double totalPeptideCoverage = (totalPeptideLength / proteinLength) * 100;                   
+//        String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
+//            + String.format("%.2f", totalPeptideCoverage) + "</td>";       
         
         proteinTableInfoBuilder.append("\n<tr>");
         proteinTableInfoBuilder.append(accessionCode);
         proteinTableInfoBuilder.append(speciesName);
         proteinTableInfoBuilder.append(proteinName);
         proteinTableInfoBuilder.append(pdhScore);
-        proteinTableInfoBuilder.append(peptideCoverageString); // for peptide coverage
+        //proteinTableInfoBuilder.append(peptideCoverageString); // for peptide coverage
         proteinTableInfoBuilder.append("</tr>");
         
         ArrayList <String> proteinDataReturn = new ArrayList();

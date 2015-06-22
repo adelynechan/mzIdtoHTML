@@ -129,7 +129,7 @@ public class ProteinData {
         Double totalPeptideLength = 0.0;
                     
         ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
-        if (!peptideSeqList.isEmpty()) {
+        if (peptideSeqList != null) {
             for (int pepSeqNum = 0; pepSeqNum < peptideSeqList.size(); pepSeqNum++) {
                 String peptideSeq = peptideSeqList.get(pepSeqNum);
                 int peptideLength = peptideSeq.length();

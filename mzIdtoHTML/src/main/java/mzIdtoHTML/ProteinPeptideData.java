@@ -17,6 +17,8 @@ import uk.ac.ebi.jmzidml.model.mzidml.Peptide;
 import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
 import uk.ac.ebi.jmzidml.model.mzidml.PeptideHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItem;
+import uk.ac.ebi.jmzidml.model.mzidml.SpectrumIdentificationItemRef;
 
 /**
  *
@@ -25,6 +27,8 @@ import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 public class ProteinPeptideData {
     SortedMap <Double, ArrayList <ProteinDetectionHypothesis>> scorePdhSortedMap = new TreeMap();
     HashMap <ProteinDetectionHypothesis, ArrayList <String>> pdhPeptideSeqHashMap = new HashMap();
+    HashMap <ProteinDetectionHypothesis, ArrayList <Peptide>> pdhPeptideHashMap = new HashMap();
+    HashMap <ProteinDetectionHypothesis, List <SpectrumIdentificationItemRef>> pdhSiiRefHashMap = new HashMap();
     
     PeptideEvidenceData peptideEvidencePpd = new PeptideEvidenceData();
     MzidData mzidDataPpd = new MzidData();
@@ -68,10 +72,16 @@ public class ProteinPeptideData {
             // Get peptide sequences for pdh-sequence HashMap   
             // Initialise a new ArrayList to store the peptide sequences associated with each pdh
             ArrayList <String> peptideSeqList = new ArrayList();
+            ArrayList <Peptide> peptideList = new ArrayList();
             
             // For each PeptideHypothesis, retrieve the peptide sequence and store in list 
             for (int pepHypNum = 0; pepHypNum < peptideHypothesisList.size(); pepHypNum++) {
                 PeptideHypothesis peptideHypothesis = peptideHypothesisList.get(pepHypNum);
+                
+                // Get the list of SIIs for producing the table of peptides which are associated with a particular protein
+                List <SpectrumIdentificationItemRef> siiRefList = peptideHypothesis.getSpectrumIdentificationItemRef();
+                pdhSiiRefHashMap.put(pdh, siiRefList);
+                
                 String peptideEvidenceRef = peptideHypothesis.getPeptideEvidenceRef();
                 PeptideEvidence peptideEvidence = peptideEvidenceIdHashMap.get(peptideEvidenceRef); // K:PeptideEvidenceID (String), V: PeptideEvidence 
                 
@@ -79,7 +89,11 @@ public class ProteinPeptideData {
                     String peptideRef = peptideEvidence.getPeptideRef();
                     Peptide peptide = peptideIdHashMap.get(peptideRef); // K:PeptideRef (String), V:Peptide
                     String peptideSequence = peptide.getPeptideSequence();
-                    peptideSeqList.add(peptideSequence);
+                    
+                    if (!peptideSeqList.contains(peptideSequence)) {
+                       peptideSeqList.add(peptideSequence); 
+                       peptideList.add(peptide);
+                    }
                 }
             }
             
@@ -91,6 +105,10 @@ public class ProteinPeptideData {
     
     public HashMap <ProteinDetectionHypothesis, ArrayList <String>> getPdhPeptideSeqHashMap() {
         return pdhPeptideSeqHashMap;
+    }
+    
+    public HashMap <ProteinDetectionHypothesis, List <SpectrumIdentificationItemRef>> getPdhSiiRefHashMap() {
+        return pdhSiiRefHashMap;
     }
 
 }

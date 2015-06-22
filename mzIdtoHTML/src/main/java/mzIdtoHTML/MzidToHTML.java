@@ -7,7 +7,10 @@ package mzIdtoHTML;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
@@ -190,6 +193,7 @@ public class MzidToHTML {
             proteinInfoMainBuilder.append("\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
             proteinInfoMainBuilder.append(proteinView.get(1));
             proteinInfoMainBuilder.append("</th> \n<th>Detected Peptide Coverage (%)</th>\n</tr>");
+            proteinInfoMainBuilder.append("</th> \n<th>Number of Peptides Detected</th>\n</tr>");
             proteinInfoMainBuilder.append(proteinView.get(0));
         }
         
@@ -209,7 +213,7 @@ public class MzidToHTML {
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
-            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
+            //fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
             fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             
             fileWriter.close();
@@ -227,6 +231,7 @@ public class MzidToHTML {
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);
+ 
     }
 }
 

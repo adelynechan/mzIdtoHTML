@@ -155,6 +155,10 @@ public class ProteinInfo {
                     String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
                             + String.format("%.2f", totalPeptideCoverage) + "</td>";
                     
+                    int peptideNumber = peptideSeqList.size();
+                    String peptideNumberString = "<td> <div style = \"text-align:center\">" 
+                            + peptideNumber + "</td>";
+                    
                     // Get peptide number for the pdh
                     int currentPdhPeptideCount = peptideSeqList.size();
                     if (currentPdhPeptideCount > maxPeptides) {
@@ -171,6 +175,7 @@ public class ProteinInfo {
                     proteinInfoBuilder.append(proteinName);
                     proteinInfoBuilder.append(pdhScore);
                     proteinInfoBuilder.append(peptideCoverageString); // for peptide coverage
+                    proteinInfoBuilder.append(peptideNumberString);
                     proteinInfoBuilder.append("</tr>");                      
                 }
             }

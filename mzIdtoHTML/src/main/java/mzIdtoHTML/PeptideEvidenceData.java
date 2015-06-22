@@ -30,7 +30,7 @@ public class PeptideEvidenceData {
                 peptideEvidenceIdHashMap.put(peptideEvidence.getId(), peptideEvidence);
                 
                 // Add the peptide ID to the arraylist if isDecoy = true
-                if (peptideEvidence.isIsDecoy()) {
+                if (peptideEvidence.isIsDecoy()) {                                     
                     peptideEvidenceDecoyIdList.add(peptideEvidence.getId());
                 }
             }      

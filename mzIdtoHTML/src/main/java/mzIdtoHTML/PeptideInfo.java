@@ -46,7 +46,6 @@ public class PeptideInfo {
                 (MzIdentMLElement.SpectrumIdentificationItem);
         while (iterSII.hasNext()) {
             SpectrumIdentificationItem sii = iterSII.next();
-            //Jun: how safe it is to assume that first CV param is the score. remember coding according to the xsd
             
             int cvParamNum = 0;
         

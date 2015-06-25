@@ -28,13 +28,13 @@ public class ProteinData {
     SortedMap <Double, ArrayList <ProteinDetectionHypothesis>> scorePdhSortedMap = ppdProteinData.getScorePdhSortedMap();
     HashMap <ProteinDetectionHypothesis, ArrayList <String>> pdhPeptideSeqHashMap = ppdProteinData.getPdhPeptideSeqHashMap();
     
-    HashMap <ProteinDetectionHypothesis, ArrayList <String>> getpdhPeptideSeqHashMap() {
-        return pdhPeptideSeqHashMap;
-    }
+    PeptideLocation pepLocationProteinData = new PeptideLocation();
+    
+    HashMap <String, ProteinDetectionHypothesis> proteinAccPdhHashMap = new HashMap();
     
     ArrayList <String> getProteinDataTable(ProteinDetectionHypothesis pdh) {
         
-        StringBuilder proteinTableInfoBuilder = new StringBuilder();
+        StringBuilder proteinTableRowBuilder = new StringBuilder();
         
         // Initialise the strings for values which are going to be extracted from the CVParam            
         String accessionCode = new String();
@@ -52,7 +52,11 @@ public class ProteinData {
         Pattern patternAcc = Pattern.compile("(.*?)\\|(.*?)\\|");
         Matcher matcherAcc = patternAcc.matcher(proteinDbAccession);
         if (matcherAcc.find()) {
-            accessionCode = "<td>" + matcherAcc.group(2) + "</td>";
+            accessionCode = "<td>" + matcherAcc.group(2)  
+                + "<div class = \"proteins\" id=" + matcherAcc.group(2) + ">Details</a></div>" // Section Id value same as protein accession code           
+                + "<br><a href=\"http://www.uniprot.org/uniprot/" + matcherAcc.group(2) + "\">UniProt</a> \n</td>";
+            proteinAccPdhHashMap.put(matcherAcc.group(2), pdh);
+            
         }
                     
         // The code for the species is extracted from the Db Accession 
@@ -123,40 +127,28 @@ public class ProteinData {
                 Double pdhScoreDouble = Double.parseDouble(pdhCvParam.getValue());
                 pdhScore = "<td> <div style = \"text-align:center\">" + String.format("%.2f", pdhScoreDouble) + "</td>";
             }           
-        }                  
-                    
-//        int proteinLength = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef()).getLength();
-//        Double totalPeptideLength = 0.0;
-                    
-//        ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);
-//        if (peptideSeqList != null) {
-//            for (int pepSeqNum = 0; pepSeqNum < peptideSeqList.size(); pepSeqNum++) {
-//                String peptideSeq = peptideSeqList.get(pepSeqNum);
-//                int peptideLength = peptideSeq.length();
-//                totalPeptideLength = totalPeptideLength + peptideLength;          
-//            }
-//        }
-//        
-//                    
-//        Double totalPeptideCoverage = (totalPeptideLength / proteinLength) * 100;                   
-//        String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
-//            + String.format("%.2f", totalPeptideCoverage) + "</td>";       
+        }  
+                       
+        Double totalPeptideCoverage = pepLocationProteinData.getPeptideCoverage(proteinDbSeq);
+        String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
+            + String.format("%.2f", totalPeptideCoverage) + "</td>";       
         
-        proteinTableInfoBuilder.append("\n<tr>");
-        proteinTableInfoBuilder.append(accessionCode);
-        proteinTableInfoBuilder.append(speciesName);
-        proteinTableInfoBuilder.append(proteinName);
-        proteinTableInfoBuilder.append(pdhScore);
-        //proteinTableInfoBuilder.append(peptideCoverageString); // for peptide coverage
-        proteinTableInfoBuilder.append("</tr>");
-        
+        proteinTableRowBuilder.append("\n<tr>");
+        proteinTableRowBuilder.append(accessionCode);
+        proteinTableRowBuilder.append(speciesName);
+        proteinTableRowBuilder.append(proteinName);
+        proteinTableRowBuilder.append(pdhScore);
+        proteinTableRowBuilder.append(peptideCoverageString); // for peptide coverage
+        proteinTableRowBuilder.append("</tr>");
+            
         ArrayList <String> proteinDataReturn = new ArrayList();
-        proteinDataReturn.add(proteinTableInfoBuilder.toString()); // add all the table rows here
+        proteinDataReturn.add(proteinTableRowBuilder.toString()); // add all the table rows here
         proteinDataReturn.add(pdhScoreType); // add the type of PDH score (to be used in table header)
         
         return proteinDataReturn;
+    } 
+    
+    HashMap <String, ProteinDetectionHypothesis> getproteinAccDbSeqHashMap() {
+        return proteinAccPdhHashMap;
     }
-    
-     
-    
 }

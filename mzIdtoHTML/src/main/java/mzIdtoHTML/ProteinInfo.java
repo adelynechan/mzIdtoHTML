@@ -56,8 +56,9 @@ public class ProteinInfo {
                 for (int pdhNum = 0; pdhNum < pdhList.size(); pdhNum ++) {
                     ProteinDetectionHypothesis pdh = pdhList.get(pdhNum);               
                     String pdhTableRow = proteinData.getProteinDataTable(pdh).get(0);
-                    pdhScoreType = proteinData.getProteinDataTable(pdh).get(1);
+                    pdhScoreType = proteinData.getProteinDataTable(pdh).get(1);                  
                     proteinInfoBuilder.append(pdhTableRow);
+                    
                     
                     // Get all the protein sequences associated with the pdh
                     ArrayList <String> peptideSeqList = pdhPeptideSeqHashMap.get(pdh);

@@ -5,10 +5,18 @@
  */
 package mzIdtoHTML;
 
+import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.HashMap;
+import java.util.ArrayList;
+import uk.ac.ebi.jmzidml.MzIdentMLElement;
+import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
+import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
@@ -190,7 +198,7 @@ public class MzidToHTML {
             proteinInfoMainBuilder.append("\n<table> <table style = 'width:100%'>\n\t<tr>");
             proteinInfoMainBuilder.append("\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
             proteinInfoMainBuilder.append(proteinView.get(1));
-            proteinInfoMainBuilder.append("</th> \n</tr>");
+            proteinInfoMainBuilder.append("</th> \n<th>Peptide Coverage</th> \n</tr>");
             proteinInfoMainBuilder.append(proteinView.get(0));
             proteinInfoMainBuilder.append("\n</table> \n</div>");
         }
@@ -211,7 +219,7 @@ public class MzidToHTML {
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
             fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
-            //fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
+            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
             fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             
             fileWriter.close();
@@ -223,14 +231,13 @@ public class MzidToHTML {
     }
 
     public static void main(String[] args) {
-        String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
-        //String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
+        //String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
+        String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);
-    }
+        converter.convert(input, output);  
+    }    
 }
-
         
 

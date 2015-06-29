@@ -8,9 +8,10 @@ package mzIdtoHTML;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
+import java.util.SortedSet;
 import java.awt.Point;
 import uk.ac.ebi.jmzidml.MzIdentMLElement;
-import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
 import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
 
 /**
@@ -19,34 +20,31 @@ import uk.ac.ebi.jmzidml.model.mzidml.PeptideEvidence;
  */
 public class PeptideLocation {
     
-    HashMap <DBSequence, ArrayList<Point>> getPeptideCoordinatesHashMap()  {
-        MzidData mzidDataPepLocation = new MzidData();
-        HashMap <String, DBSequence> dbSequenceIdHashMap = mzidDataPepLocation.getDbSequenceIdHashMap();
-        
+    HashMap <String, ArrayList<Point>> getPeptideCoordinatesHashMap()  {      
         Iterator <PeptideEvidence> iterPepEvid = MzidToHTML.unmarshaller.unmarshalCollectionFromXpath
                 (MzIdentMLElement.PeptideEvidence);
         
-        HashMap <DBSequence, ArrayList<Point>> dbSeqCoordsHashMap = new HashMap <DBSequence, ArrayList<Point>> ();
+        HashMap <String, ArrayList<Point>> dbSeqCoordsHashMap = new HashMap <String, ArrayList<Point>> ();
         
         while (iterPepEvid.hasNext()) {
             PeptideEvidence peptideEvidence = iterPepEvid.next();
             
             String dbSeqRef = peptideEvidence.getDBSequenceRef();
-            DBSequence dbSequence = dbSequenceIdHashMap.get(dbSeqRef);
             Point peptideCoordinates = new Point(peptideEvidence.getStart(), peptideEvidence.getEnd());
 
-            if (dbSeqCoordsHashMap.containsKey(dbSequence)) {
-                ArrayList peptideCoordinatesList = dbSeqCoordsHashMap.get(dbSequence);
+            if (dbSeqCoordsHashMap.containsKey(dbSeqRef)) {
+                ArrayList peptideCoordinatesList = dbSeqCoordsHashMap.get(dbSeqRef);
                 peptideCoordinatesList.add(peptideCoordinates);
-                dbSeqCoordsHashMap.put(dbSequence, peptideCoordinatesList);
+                dbSeqCoordsHashMap.put(dbSeqRef, peptideCoordinatesList);
             }
             
             else {
                 ArrayList peptideCoordinatesList = new ArrayList <Point> ();
                 peptideCoordinatesList.add(peptideCoordinates);
-                dbSeqCoordsHashMap.put(dbSequence, peptideCoordinatesList);
+                dbSeqCoordsHashMap.put(dbSeqRef, peptideCoordinatesList);
             }
         }
+        
         return dbSeqCoordsHashMap;                        
     }
     
@@ -98,30 +96,6 @@ public class PeptideLocation {
         } 
         return overlapLength;     
     }
-    
-    Double getPeptideCoverage(DBSequence dbSeq) {
-        PeptideLocation peptideLocation = new PeptideLocation();
-        HashMap <DBSequence, ArrayList<Point>> dbSeqCoordsPeptideHashMap = peptideLocation.getPeptideCoordinatesHashMap();
-        
-        Double totalOverlapLength = 0.0;
-        Double totalPeptideLength = 0.0;
-        
-        ArrayList <Point> peptideCoordinatesList = new ArrayList <Point>();
-        peptideCoordinatesList.add(new Point(0,0));
-        //peptideCoordinatesList.addAll(dbSeqCoordsPeptideHashMap.get(dbSeq));                                
-        
-        //if (peptideCoordinatesList != null) {
-            for (int peptideNum = 0; peptideNum < peptideCoordinatesList.size() - 1; peptideNum++) {
-                Point pep1 = peptideCoordinatesList.get(peptideNum);
-                Point pep2 = peptideCoordinatesList.get(peptideNum + 1);
-            
-                totalOverlapLength = totalOverlapLength + peptideLocation.getOverlapLength(pep1, pep2);
-                totalPeptideLength = totalPeptideLength + pep1.getY() - pep1.getX();     
-            }      
-        //}
-                     
-        int proteinLength = dbSeq.getLength();
-        
-        return (totalPeptideLength - totalOverlapLength) / proteinLength * 100;
-    }
 }
+    
+

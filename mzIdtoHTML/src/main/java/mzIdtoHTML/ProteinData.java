@@ -5,9 +5,12 @@
  */
 package mzIdtoHTML;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +32,7 @@ public class ProteinData {
     HashMap <ProteinDetectionHypothesis, ArrayList <String>> pdhPeptideSeqHashMap = ppdProteinData.getPdhPeptideSeqHashMap();
     
     PeptideLocation pepLocationProteinData = new PeptideLocation();
+    HashMap <String, ArrayList<Point>> dbSeqPeptideCoordsHashMap = pepLocationProteinData.getPeptideCoordinatesHashMap();
     
     HashMap <String, ProteinDetectionHypothesis> proteinAccPdhHashMap = new HashMap();
     
@@ -45,7 +49,8 @@ public class ProteinData {
                 
         // Get the DBSequence ID from the PDH and then look up the DBSequence from the hashmap    
         // Get the sequence of each PDH from the DbSequence HashMap
-        DBSequence proteinDbSeq = proteinDbSequenceIdHashMap.get(pdh.getDBSequenceRef());
+        String proteinDbSeqRef = pdh.getDBSequenceRef();
+        DBSequence proteinDbSeq = proteinDbSequenceIdHashMap.get(proteinDbSeqRef);
         String proteinDbAccession = proteinDbSeq.getAccession();
         
         // Extract protein accession code from the Accession Number associated with DBSequence
@@ -53,7 +58,7 @@ public class ProteinData {
         Matcher matcherAcc = patternAcc.matcher(proteinDbAccession);
         if (matcherAcc.find()) {
             accessionCode = "<td>" + matcherAcc.group(2)  
-                + "<div class = \"proteins\" id=" + matcherAcc.group(2) + ">Details</a></div>" // Section Id value same as protein accession code           
+                //+ "<div class = \"proteins\" id=" + matcherAcc.group(2) + ">Details</a></div>" // Section Id value same as protein accession code           
                 + "<br><a href=\"http://www.uniprot.org/uniprot/" + matcherAcc.group(2) + "\">UniProt</a> \n</td>";
             proteinAccPdhHashMap.put(matcherAcc.group(2), pdh);
             
@@ -129,9 +134,40 @@ public class ProteinData {
             }           
         }  
                        
-        Double totalPeptideCoverage = pepLocationProteinData.getPeptideCoverage(proteinDbSeq);
+        Double totalOverlapLength = 0.0;
+        Double totalPeptideLength = 0.0;
+        
+        ArrayList <Point> peptideCoordinatesList = new ArrayList <Point> ();
+        peptideCoordinatesList = dbSeqPeptideCoordsHashMap.get(proteinDbSeqRef); 
+        
+        HashMap <Double, Double> localPeptideCoordinates = new HashMap <Double, Double> ();
+        
+        if (peptideCoordinatesList.size() > 1) {
+            for (int peptideNum = 0; peptideNum < peptideCoordinatesList.size() - 1; peptideNum++) {                    
+                Point pep1 = peptideCoordinatesList.get(peptideNum);      
+                totalPeptideLength = totalPeptideLength + pep1.getY() - pep1.getX();  
+                
+                for (int peptideCompare = peptideNum + 1; peptideCompare < peptideCoordinatesList.size() - peptideNum; peptideCompare ++) {
+                    Point pep2 = peptideCoordinatesList.get(peptideNum + peptideCompare);
+                    totalOverlapLength = totalOverlapLength + pepLocationProteinData.getOverlapLength(pep1, pep2);
+                }              
+            }                           
+        }
+        
+        else if (peptideCoordinatesList.size() == 1) {
+            totalPeptideLength = peptideCoordinatesList.get(0).getY() - peptideCoordinatesList.get(0).getX();
+        }
+        
+//        else {
+//            totalPeptideLength = proteinDbSeq.getLength() + 0.0;
+//        }
+        
+        
+        int proteinLength = proteinDbSeq.getLength();
+        Double totalPeptideCoverage = (totalPeptideLength - totalOverlapLength) / proteinLength * 100;
+        
         String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
-            + String.format("%.2f", totalPeptideCoverage) + "</td>";       
+            + String.format("%.2f", totalPeptideCoverage) + "</td>";      
         
         proteinTableRowBuilder.append("\n<tr>");
         proteinTableRowBuilder.append(accessionCode);

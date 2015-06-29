@@ -31,7 +31,7 @@ public class ProteinInfo {
         
         return pdl;
     }
-   
+    
     List <String> getProteinInfo() {
         ProteinPeptideData ppdProtein = new ProteinPeptideData();
         MzidData mzidDataProtein = new MzidData();
@@ -54,7 +54,7 @@ public class ProteinInfo {
             if (!pdhList.isEmpty()) {
             
                 for (int pdhNum = 0; pdhNum < pdhList.size(); pdhNum ++) {
-                    ProteinDetectionHypothesis pdh = pdhList.get(pdhNum);               
+                    ProteinDetectionHypothesis pdh = pdhList.get(pdhNum);    
                     String pdhTableRow = proteinData.getProteinDataTable(pdh).get(0);
                     pdhScoreType = proteinData.getProteinDataTable(pdh).get(1);                  
                     proteinInfoBuilder.append(pdhTableRow);

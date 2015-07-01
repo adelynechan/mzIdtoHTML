@@ -9,8 +9,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,13 +52,15 @@ public class ProteinData {
         String proteinDbAccession = proteinDbSeq.getAccession();
         
         // Extract protein accession code from the Accession Number associated with DBSequence
-        Pattern patternAcc = Pattern.compile("(.*?)\\|(.*?)\\|");
-        Matcher matcherAcc = patternAcc.matcher(proteinDbAccession);
+        // Accession number regular expression from UniProt document
+        // http://web.expasy.org/docs/userman.html
+        Pattern patternAcc = Pattern.compile("[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}");
+        Matcher matcherAcc = patternAcc.matcher((proteinDbAccession));
         if (matcherAcc.find()) {
-            accessionCode = "<td>" + matcherAcc.group(2)  
+            accessionCode = "<td>" + matcherAcc.group(0)  
                 //+ "<div class = \"proteins\" id=" + matcherAcc.group(2) + ">Details</a></div>" // Section Id value same as protein accession code           
-                + "<br><a href=\"http://www.uniprot.org/uniprot/" + matcherAcc.group(2) + "\">UniProt</a> \n</td>";
-            proteinAccPdhHashMap.put(matcherAcc.group(2), pdh);
+                + "<br><a href=\"http://www.uniprot.org/uniprot/" + matcherAcc.group(0) + "\">UniProt</a> \n</td>";
+            proteinAccPdhHashMap.put(matcherAcc.group(0), pdh);
             
         }
                     
@@ -140,8 +140,6 @@ public class ProteinData {
         ArrayList <Point> peptideCoordinatesList = new ArrayList <Point> ();
         peptideCoordinatesList = dbSeqPeptideCoordsHashMap.get(proteinDbSeqRef); 
         
-        HashMap <Double, Double> localPeptideCoordinates = new HashMap <Double, Double> ();
-        
         if (peptideCoordinatesList.size() > 1) {
             for (int peptideNum = 0; peptideNum < peptideCoordinatesList.size() - 1; peptideNum++) {                    
                 Point pep1 = peptideCoordinatesList.get(peptideNum);      
@@ -157,12 +155,7 @@ public class ProteinData {
         else if (peptideCoordinatesList.size() == 1) {
             totalPeptideLength = peptideCoordinatesList.get(0).getY() - peptideCoordinatesList.get(0).getX();
         }
-        
-//        else {
-//            totalPeptideLength = proteinDbSeq.getLength() + 0.0;
-//        }
-        
-        
+             
         int proteinLength = proteinDbSeq.getLength();
         Double totalPeptideCoverage = (totalPeptideLength - totalOverlapLength) / proteinLength * 100;
         

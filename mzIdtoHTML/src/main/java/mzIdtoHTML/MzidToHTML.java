@@ -5,18 +5,10 @@
  */
 package mzIdtoHTML;
 
-import java.awt.Point;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.ArrayList;
-import uk.ac.ebi.jmzidml.MzIdentMLElement;
-import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionHypothesis;
 import uk.ac.ebi.jmzidml.model.mzidml.ProteinDetectionList;
-import uk.ac.ebi.jmzidml.model.mzidml.DBSequence;
 
 import uk.ac.ebi.jmzidml.xml.io.MzIdentMLUnmarshaller;
 
@@ -231,8 +223,8 @@ public class MzidToHTML {
     }
 
     public static void main(String[] args) {
-        //String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
-        String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
+        String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
+        //String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
 //        input = args[0];
         String output = "result.html";
         MzidToHTML converter = new MzidToHTML(new File(input));

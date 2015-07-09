@@ -185,7 +185,7 @@ public class PeptideInfo {
             String printScore = "<td> <div style = \"text-align:center\">" + scores.get(scoreNum) + " </td>";
             String printAssociatedProteins = "<td> " + proteinName + " </td>";
             
-            peptideInfoBuilder.append("<tr>");
+            peptideInfoBuilder.append("<tr class=\"peptidepaginate\">");
             peptideInfoBuilder.append(printSpectrumIdItem);
             peptideInfoBuilder.append(printSequence);
             peptideInfoBuilder.append(printCalculatedMassToCharge);

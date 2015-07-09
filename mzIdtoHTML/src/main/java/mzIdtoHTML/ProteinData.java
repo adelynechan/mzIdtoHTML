@@ -162,7 +162,7 @@ public class ProteinData {
         String peptideCoverageString = "<td> <div style = \"text-align:center\">" 
             + String.format("%.2f", totalPeptideCoverage) + "</td>";      
         
-        proteinTableRowBuilder.append("\n<tr>");
+        proteinTableRowBuilder.append("\n<tr class=\"proteinpaginate\">");
         proteinTableRowBuilder.append(accessionCode);
         proteinTableRowBuilder.append(speciesName);
         proteinTableRowBuilder.append(proteinName);

@@ -1,0 +1,7 @@
+table, tr, td, th {
+    border: 1px solid blue;
+    padding: 2px;
+}
+table th {
+    background-color: #999999;
+}

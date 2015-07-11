@@ -42,11 +42,12 @@ public class MzidToHTML {
         headerBuilder.append("\n<link rel=\"stylesheet\" href=\"stylesheet.css\">");
         
         // Include the source for Jquery (downloaded, if need be change to hosted link here)
-        headerBuilder.append("\n<script src=\"jquery-1.11.3.min.js\"></script>");
+        headerBuilder.append("\n<script src=\"js/jquery-1.11.3.min.js\"></script>");
         // Include the source for Jquery functions written for this project
-        headerBuilder.append("<script src=\"mzidJqueryFunctions.js\"></script>");     
-        headerBuilder.append("<script src=\"sorttable.js\" type=\"text/javascript\"></script>");
-        headerBuilder.append("<script src=\"jquery.simplePagination.js\"></script>");
+        headerBuilder.append("<script src=\"js/mzidJqueryFunctions.js\"></script>");     
+        //headerBuilder.append("<script src=\"js/sorttable.js\" type=\"text/javascript\"></script>");
+        headerBuilder.append("<script src=\"js/jquery.simplePagination.js\"></script>"); // Pagination
+        //headerBuilder.append("<script src=\"http://cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js\"></script>");
 
         headerBuilder.append("\n<title>mzIdtoHTML</title>");
         headerBuilder.append("\n<h1> Converted From ");
@@ -157,12 +158,12 @@ public class MzidToHTML {
         // Create the main header "Peptide View"
         peptideInfoMainBuilder.append("\n<h2> Peptide View </h2>");
         
-        // Specify features of table - sortable (takes time!), table width
-        peptideInfoMainBuilder.append("<table><table class = \"sortable\" table style = \"width = 100%\"");
-        //peptideInfoMainBuilder.append("\n<table><table style = \"width = 100%\"");
+        // Specify features of table, table width
+        peptideInfoMainBuilder.append("<table><table id = \"tblS\" class = \"display\" style = \"width = 100%\">");
+        
         
         // Create the header row of the table
-        peptideInfoMainBuilder.append("<thead>\n<tr>\n<th>PSM ID</th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
+        peptideInfoMainBuilder.append("<thead>\n<tr>\n<th scope=\"col\">PSM ID <input id=\"txtPrjName\" onkeyup=\"searchRows('tblS')\" type=\"text\"/></th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
                 + "\n<th>Exp m/z</th> \n<th>Charge</th> \n<th>Modifications</th> \n<th>Score: ");
         peptideInfoMainBuilder.append(peptideView.get(1)); // Get type of score and include in header
         peptideInfoMainBuilder.append("</th> \n<th>Associated Proteins</th> \n</tr>\n</thead>");
@@ -186,12 +187,13 @@ public class MzidToHTML {
            
         if (pdl != null) {           
             proteinInfoMainBuilder.append("\n<h2> Protein View </h2>");
-            proteinInfoMainBuilder.append("\n<table> <table id = \"proteins\" class = \"sortable\" style = 'width:100%'>\n\t<tr>");
-            proteinInfoMainBuilder.append("\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
+            proteinInfoMainBuilder.append("\n<table> <table id = \"proteins\" class = \"display\" style = 'width:100%'>");
+            proteinInfoMainBuilder.append("\n<thead>\n<tr>\n<th>Accession #</th>\n<th>Species</th> \n<th>Protein Name</th> \n<th>Score: ");
             proteinInfoMainBuilder.append(proteinView.get(1));
-            proteinInfoMainBuilder.append("</th> \n<th>Peptide Coverage</th> \n</tr>");
+            proteinInfoMainBuilder.append("</th> \n<th>Peptide Coverage</th> \n</tr> \n</thead>");
+            proteinInfoMainBuilder.append("<tbody>");
             proteinInfoMainBuilder.append(proteinView.get(0));
-            proteinInfoMainBuilder.append("\n</table>");
+            proteinInfoMainBuilder.append("\n</tbody> \n</table>");
             proteinInfoMainBuilder.append("\n<div id=\"protein-nav\"></div>");
         }
         
@@ -226,7 +228,7 @@ public class MzidToHTML {
         String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
         //String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
 //        input = args[0];
-        String output = "result.html";
+        String output = "result1.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);  
     }    

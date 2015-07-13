@@ -44,8 +44,12 @@ public class MzidToHTML {
         // Include the source for Jquery (downloaded, if need be change to hosted link here)
         headerBuilder.append("\n<script src=\"js/jquery-1.11.3.min.js\"></script>");
         // Include the source for Jquery functions written for this project
-        headerBuilder.append("<script src=\"js/mzidJqueryFunctions.js\"></script>");     
+        headerBuilder.append("<script src=\"js/mzidJqueryFunctions.js\"></script>");  
+        //headerBuilder.append("<script src=\"js/mzidJqueryFunctions_DT.js\"></script>");
         //headerBuilder.append("<script src=\"js/sorttable.js\" type=\"text/javascript\"></script>");
+        
+        // Alternative plugins for pagination: Simple pagination which only does pagination or
+        // Data tables which does sorting (does not seem to work) and searching as well
         headerBuilder.append("<script src=\"js/jquery.simplePagination.js\"></script>"); // Pagination
         //headerBuilder.append("<script src=\"http://cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js\"></script>");
 
@@ -159,11 +163,11 @@ public class MzidToHTML {
         peptideInfoMainBuilder.append("\n<h2> Peptide View </h2>");
         
         // Specify features of table, table width
-        peptideInfoMainBuilder.append("<table><table id = \"tblS\" class = \"display\" style = \"width = 100%\">");
+        peptideInfoMainBuilder.append("<table><table id = \"peptides\" class = \"display\" style = \"width = 100%\">");
         
         
         // Create the header row of the table
-        peptideInfoMainBuilder.append("<thead>\n<tr>\n<th scope=\"col\">PSM ID <input id=\"txtPrjName\" onkeyup=\"searchRows('tblS')\" type=\"text\"/></th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
+        peptideInfoMainBuilder.append("<thead>\n<tr>\n<th> PSM ID></th>\n<th>Sequence</th> \n<th>Calc m/z</th> "
                 + "\n<th>Exp m/z</th> \n<th>Charge</th> \n<th>Modifications</th> \n<th>Score: ");
         peptideInfoMainBuilder.append(peptideView.get(1)); // Get type of score and include in header
         peptideInfoMainBuilder.append("</th> \n<th>Associated Proteins</th> \n</tr>\n</thead>");
@@ -228,7 +232,7 @@ public class MzidToHTML {
         String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
         //String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
 //        input = args[0];
-        String output = "result1.html";
+        String output = "resultSP.html";
         MzidToHTML converter = new MzidToHTML(new File(input));
         converter.convert(input, output);  
     }    

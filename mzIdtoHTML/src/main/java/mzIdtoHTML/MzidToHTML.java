@@ -22,13 +22,20 @@ public class MzidToHTML {
     // Public so other objects can access the unmarshalled data
     public static MzIdentMLUnmarshaller unmarshaller;
     
+    final private String input;
+    
     // Check if the file exists (modify later to include mzIdentML verification?)
     // Unmarshals the file using the unmarshaller if the file exists
     // Prints out a message to the console 
-    public MzidToHTML(File file) {
+    public MzidToHTML(String in) {
+        System.out.println("Checking the existance of the file");
+        input = in;
+        File file = new File(input);
         if (file.exists()) {
-            System.out.println("file exists");
             unmarshaller = new MzIdentMLUnmarshaller(file);
+        }else{
+            System.out.println("Cannot find the input file "+in);
+            System.exit(2);
         }
     }
     
@@ -56,7 +63,6 @@ public class MzidToHTML {
         headerBuilder.append("\n<title>mzIdtoHTML</title>");
         headerBuilder.append("\n<h1> Converted From ");
         headerBuilder.append(input);
-        //headerBuilder.append("(Filename).mzid"); // for generic title
         headerBuilder.append("\n</h1>");
         headerBuilder.append("\n</head>");  
         
@@ -204,7 +210,7 @@ public class MzidToHTML {
         return proteinInfoMainBuilder.toString();
     }
     
-    public void convert(String input, String output) {
+    public void convert(String output) {
         
         // Name the results file "results.html" (String output in main method)
         File htmlTemplateFile = new File(output);   
@@ -212,30 +218,41 @@ public class MzidToHTML {
         try { 
             
             // New filewriter to write items to the results.html file
-            FileWriter fileWriter = new FileWriter(htmlTemplateFile, true);
+            FileWriter fileWriter = new FileWriter(htmlTemplateFile, false);
  
             fileWriter.append(getHeader(input)); // Header
             fileWriter.append(getMetadata()); // Metadata menu item 1
-            fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
-            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
-            fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
+//            fileWriter.append(getGlobalStatistics()); // Statistics menu item 2
+//            fileWriter.append(getPeptideInfoMain()); // Peptides menu item 3            
+//            fileWriter.append(getProteinInfoMain()); // Protein menu item 4 (not always present)
             
             fileWriter.close();
-        }
-        
-        catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }      
     }
 
     public static void main(String[] args) {
-        String input = "GalaxyExampleProteoGrouper.mzid"; // Smaller mzid test file
-        //String input = "GalaxyExampleBig.mzid"; // Full dataset test file - currently takes very long to run
-//        input = args[0];
+//        if (args.length!=2){
+//            System.out.println("Wrong number of parameters");
+//            usage();
+//        }
         String output = "resultSP.html";
-        MzidToHTML converter = new MzidToHTML(new File(input));
-        converter.convert(input, output);  
-    }    
+//        String output = args[1];
+//        MzidToHTML converter = new MzidToHTML("GalaxyExampleProteoGrouper.mzid");
+//        MzidToHTML converter = new MzidToHTML("GalaxyExamplePeptide.mzid");
+//        MzidToHTML converter = new MzidToHTML("ExampleMod.mzid");
+//        MzidToHTML converter = new MzidToHTML("ExampleNtermMod.mzid");
+        MzidToHTML converter = new MzidToHTML("ExampleCtermMod.mzid");
+//        MzidToHTML converter = new MzidToHTML(args[0]);
+        converter.convert(output);  
+    }
+    
+    static private void usage(){
+        System.out.println("Usage: java -jar MzidToHTML.jar <input.mzid> <output.html>");
+        System.out.println("The program ");
+        System.exit(1);
+    }
 }
         
 

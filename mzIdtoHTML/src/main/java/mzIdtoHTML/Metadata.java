@@ -110,6 +110,7 @@ public class Metadata {
                                     sb.append("Protein C-term ");
                             }
                         }
+                        return sb.toString();
                     }
                 }
                 String mod = modificationName.get(0);
@@ -156,24 +157,30 @@ public class Metadata {
     // Enzyme(s) (if empty return "Information not available")
     // <xsd:element name="Enzymes" type="EnzymesType" minOccurs="0"/>
     String getEnzymesUsed() {
-        List<Enzyme> enzList = sip.getEnzymes().getEnzyme();
-        StringBuilder enzymeBuilder = new StringBuilder();
-
-        if (enzList.isEmpty()) { 
-            enzymeBuilder.append("Information not available");
-        } else {
-            for (Enzyme enzymeList : enzList) {
-                ParamList enzymeName = enzymeList.getEnzymeName();
-                List<CvParam> enzymeParam;
-                enzymeParam = enzymeName.getCvParam();
-
-                for (int i = 0; i < enzymeParam.size(); i++) {
-                    enzymeBuilder.append(enzymeParam.get(i).getName());
-                    enzymeBuilder.append(" ");
-                }
-            }
-            enzymeBuilder.deleteCharAt(enzymeBuilder.length()-1);
+//        <xsd:element name="Enzymes" type="EnzymesType" minOccurs="0"/>
+        Enzymes enzymes =sip.getEnzymes();
+        if(enzymes==null){
+            return "Information not available";
         }
+
+//	<xsd:element name="Enzyme" type="EnzymeType" maxOccurs="unbounded"/>
+//        implies that minOccurs = 1
+        StringBuilder enzymeBuilder = new StringBuilder();
+        for (Enzyme enzymeList : enzymes.getEnzyme()) {
+//        <xsd:element name="EnzymeName" type="ParamListType" minOccurs="0">
+//	  <xsd:documentation>The name of the enzyme from a CV.            
+            ParamList enzymeName = enzymeList.getEnzymeName();
+            if (enzymeName==null) continue;
+            List<CvParam> enzymeParam = enzymeName.getCvParam();
+            for (int i = 0; i < enzymeParam.size(); i++) {
+                enzymeBuilder.append(enzymeParam.get(i).getName());
+                enzymeBuilder.append(" ");
+            }
+        }
+        if(enzymeBuilder.length()==0){//no enzyme name contained
+            return "Information not available";
+        }
+        enzymeBuilder.deleteCharAt(enzymeBuilder.length() - 1);
 
         return enzymeBuilder.toString();
     }
